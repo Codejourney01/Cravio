@@ -1,7 +1,6 @@
 import React from "react";
-
 import { Swiper, SwiperSlide } from "swiper/react";
-import { FreeMode, Navigation } from "swiper/modules";
+import { FreeMode, Navigation, Autoplay } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import "swiper/css";
@@ -9,6 +8,8 @@ import "swiper/css/free-mode";
 import "swiper/css/navigation";
 
 import cofeebanner from "../../assets/images/banners/Cofee.webp";
+import banner2 from '../../assets/images/banners/banner2.jpeg'
+import banner3 from "../../assets/images/banners/banner3.jpeg";
 
 import Heading from "../../components/Headings/Heading";
 import CategoryCard from "../../components/Cards/CategoryCard";
@@ -90,21 +91,54 @@ export default function Home() {
 
   return (
     <div className="w-full">
+
       {/* ================= BANNER ================= */}
 
       <div className="flex items-center justify-center">
-        <img
-          src={cofeebanner}
-          className="w-[98%] md:w-[98%] md:h-[300px] md:object-cover rounded-md"
-          alt="Coffee Banner"
-        />
+        <Swiper
+          modules={[Autoplay]}
+          autoplay={{
+            delay: 2000,
+            disableOnInteraction: false,
+          }}
+          loop={true}
+          slidesPerView={1}
+          className="w-[98%]"
+        >
+          {/* Banner 1 */}
+          <SwiperSlide>
+            <img
+              src={cofeebanner}
+              className="w-full h-[180px] md:h-[300px] object-cover rounded-md"
+              alt="Coffee Banner"
+            />
+          </SwiperSlide>
+
+          {/* Banner 2 */}
+          <SwiperSlide>
+            <img
+              src={banner2}
+              className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+              alt="Banner 2"
+            />
+          </SwiperSlide>
+
+          {/* Banner 3 */}
+          <SwiperSlide>
+            <img
+              src={banner3}
+              className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+              alt="Banner 3"
+            />
+          </SwiperSlide>
+        </Swiper>
       </div>
 
       {/* ================= CATEGORIES ================= */}
 
       <section className="mt-9">
-        {/* Heading */}
 
+        {/* Heading */}
         <div className="px-3">
           <Heading
             headingname="Categories"
@@ -113,7 +147,6 @@ export default function Home() {
         </div>
 
         {/* Category Swiper */}
-
         <div className="mt-6 px-3">
           <Swiper
             modules={[FreeMode]}
@@ -125,7 +158,6 @@ export default function Home() {
                 slidesPerView: 4,
                 spaceBetween: 16,
               },
-
               1024: {
                 slidesPerView: 5,
                 spaceBetween: 20,
@@ -149,8 +181,8 @@ export default function Home() {
       {/* ================= POPULAR RESTAURANTS ================= */}
 
       <section className="mt-9">
-        {/* Heading */}
 
+        {/* Heading */}
         <div className="px-3">
           <Heading
             headingname="Popular Restaurants"
@@ -159,9 +191,8 @@ export default function Home() {
         </div>
 
         <div className="px-3 mt-5">
-          {/* ================================================= */}
-          {/* ================= MOBILE GRID =================== */}
-          {/* ================================================= */}
+
+          {/* ================= MOBILE GRID ================= */}
 
           <div className="grid grid-cols-1 gap-4 md:hidden">
             {restaurants.map((restaurant) => (
@@ -169,11 +200,10 @@ export default function Home() {
             ))}
           </div>
 
-          {/* ================================================= */}
           {/* ================= DESKTOP SWIPER ================= */}
-          {/* ================================================= */}
 
           <div className="hidden md:block relative">
+
             <Swiper
               modules={[Navigation]}
               navigation={{
@@ -197,65 +227,73 @@ export default function Home() {
               ))}
             </Swiper>
 
-            {/* ================= PREVIOUS BUTTON ================= */}
-
             {/* Previous Button */}
+
             <button
               className="
-    restaurant-prev
-    absolute
-    left-0
-    top-1/2
-    -translate-y-1/2
-    z-10
-    w-9
-    h-9
-    bg-white
-    shadow-md
-    rounded-full
-    flex
-    items-center
-    justify-center
-    text-gray-600
-    hover:text-[#FF5A1F]
-    transition
-  "
+                restaurant-prev
+                absolute
+                left-0
+                top-1/2
+                -translate-y-1/2
+                z-10
+                w-9
+                h-9
+                bg-white
+                shadow-md
+                rounded-full
+                flex
+                items-center
+                justify-center
+                text-gray-600
+                hover:text-[#FF5A1F]
+                transition
+              "
             >
               <FiChevronLeft size={20} />
             </button>
 
             {/* Next Button */}
+
             <button
               className="
-    restaurant-next
-    absolute
-    right-0
-    top-1/2
-    -translate-y-1/2
-    z-10
-    w-9
-    h-9
-    bg-white
-    shadow-md
-    rounded-full
-    flex
-    items-center
-    justify-center
-    text-gray-600
-    hover:text-[#FF5A1F]
-    transition
-  "
+                restaurant-next
+                absolute
+                right-0
+                top-1/2
+                -translate-y-1/2
+                z-10
+                w-9
+                h-9
+                bg-white
+                shadow-md
+                rounded-full
+                flex
+                items-center
+                justify-center
+                text-gray-600
+                hover:text-[#FF5A1F]
+                transition
+              "
             >
               <FiChevronRight size={20} />
             </button>
+
           </div>
         </div>
       </section>
+
+      {/* ================= PICKED JUST FOR YOU ================= */}
+
       <section>
         <div className="px-3 mt-7">
-          <Heading headingname={"Picked Just For You "} subheading={"Personalized recommendations from Cravio."} />
+          <Heading
+            headingname="Picked Just For You"
+            subheading="Personalized recommendations from Cravio."
+          />
         </div>
       </section>
+
     </div>
   );
 }
