@@ -6,7 +6,7 @@ import {
 } from "react-icons/fi";
 
 import AddressSelector from "./AddressSelector";
-import SearchBar from "./SearchBar";
+import SearchBar from "./Searchbar.jsx";
 
 export default function Nav() {
   return (
