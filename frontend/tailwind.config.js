@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
+
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -8,18 +10,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        
         cravio: "#FF5A1F",
 
-     
-        heading: "#000000",
-        subheading: "#9097A2",
-        nav: "#9CA3AF",
-        description: "#C1C1C1",
+        heading: "var(--color-heading)",
+        subheading: "var(--color-subheading)",
+        nav: "var(--color-nav)",
+        description: "var(--color-description)",
 
-  
-        surface: "#F8F9FA",
-        white: "#FFFFFF",
+        surface: "var(--color-surface)",
+        card: "var(--color-card)",
+        border: "var(--color-border)",
+
+        white: "var(--color-white)",
       },
 
       borderRadius: {
