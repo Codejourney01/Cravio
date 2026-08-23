@@ -1,20 +1,29 @@
+import { useState } from "react";
 import { Outlet } from "react-router-dom";
 
 import Sidebar from "../components/Navbar/Sidebar";
 import Navbar from "../components/Navbar/Nav";
+import AskCravio from "../components/AI/AskCravio";
 
 function MainLayout() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-surface">
 
-      {/* Sidebar */}
-      <Sidebar />
+      {/* ================= SIDEBAR ================= */}
+      <Sidebar
+        isOpen={isSidebarOpen}
+        setIsOpen={setIsSidebarOpen}
+      />
 
-      {/* Main Area */}
+      {/* ================= MAIN AREA ================= */}
       <div className="ml-0 min-[721px]:ml-60">
 
-        {/* Top Navbar */}
-        <Navbar />
+        {/* Navbar */}
+        <Navbar
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
 
         {/* Page Content */}
         <main className="p-4 sm:p-6 lg:p-8">
@@ -22,6 +31,9 @@ function MainLayout() {
         </main>
 
       </div>
+
+      {/* ================= ASK CRAVIO AI ================= */}
+      <AskCravio />
 
     </div>
   );
