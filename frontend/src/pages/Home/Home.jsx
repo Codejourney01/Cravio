@@ -15,10 +15,10 @@ import Heading from "../../components/Headings/Heading";
 import CategoryCard from "../../components/Cards/CategoryCard";
 import RestaurantCard from "../../components/Cards/RestaurantCard";
 
-import pizza from "../../assets/icons/Categories/HOME.jpeg";
+import pizza from "../../assets/icons/Categories/HOME.png";
 import burger from "../../assets/icons/Categories/BURGER.webp";
-import dessert from "../../assets/icons/Categories/dessert.jpg";
-import juice from "../../assets/icons/Categories/juice.jpeg";
+import dessert from "../../assets/icons/Categories/dessert.png";
+import juice from "../../assets/icons/Categories/juice.png";
 import momo from "../../assets/icons/Categories/momo.webp";
 
 export default function Home() {
