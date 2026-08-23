@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import Sidebar from "../components/Navbar/Sidebar";
 import Navbar from "../components/Navbar/Nav";
-import AskCravio from "../components/AI/AskCravio";
+import AskCravio from "../components/Ai/AskCravio";
 
 function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
