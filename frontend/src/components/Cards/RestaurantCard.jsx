@@ -11,11 +11,12 @@ export default function RestaurantCard({
 }) {
   return (
     <div className="w-full h-[242px] bg-white shadow-[0_4px_18px_rgba(255,90,31,0.07)] rounded-[18px] overflow-hidden">
-      
       {/* Restaurant Image */}
       <img
         src={Rimage}
         alt={Rname}
+        loading="lazy"
+        decoding="async"
         className="w-full h-[150px] object-cover"
       />
 
@@ -46,7 +47,6 @@ export default function RestaurantCard({
 
       {/* Time + Price */}
       <div className="flex items-center justify-between px-3 mt-3">
-
         {/* Delivery Time */}
         <div className="text-subheading flex items-center gap-1 min-w-0">
           <FaClock
@@ -67,7 +67,6 @@ export default function RestaurantCard({
             {priceForTwo} for two
           </span>
         </div>
-
       </div>
     </div>
   );
