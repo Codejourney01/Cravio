@@ -1,81 +1,74 @@
-import React from 'react'
+import React from "react";
+import { FaClock, FaRupeeSign, FaStar } from "react-icons/fa";
 
-import bgking from '../../assets/images/Restuarants/burgerking.webp'
-
-import { FaClock, FaRupeeSign, FaStar } from 'react-icons/fa'
-
-export default function RestaurantCard() {
+export default function RestaurantCard({
+  Rname,
+  Rimage,
+  rating,
+  cuisines,
+  deliveryTime,
+  priceForTwo,
+}) {
   return (
     <div className="w-full h-[242px] bg-white shadow-[0_4px_18px_rgba(255,90,31,0.07)] rounded-[18px] overflow-hidden">
-
+      
       {/* Restaurant Image */}
       <img
-        src={bgking}
-        alt="Burger House"
+        src={Rimage}
+        alt={Rname}
         className="w-full h-[150px] object-cover object-top"
       />
 
       {/* Restaurant Name + Rating */}
       <div className="px-3 pt-3 flex justify-between items-center pr-4">
-
         <h3 className="font-medium text-heading text-sm truncate">
-          Burger House
+          {Rname}
         </h3>
 
         <div className="flex items-center justify-center gap-1 shrink-0">
-
           <FaStar
             className="text-yellow-400"
             size={11}
           />
 
           <span className="text-[12px] text-subheading">
-            4.5
+            {rating}
           </span>
-
         </div>
-
       </div>
 
-      {/* Category */}
+      {/* Cuisines */}
       <div className="px-3 mt-[1px]">
-
         <h5 className="text-[11px] font-semibold text-subheading truncate">
-          Burger, Fastfood
+          {cuisines?.join(", ")}
         </h5>
-
       </div>
 
-      {/* Time + Delivery */}
+      {/* Time + Price */}
       <div className="flex items-center justify-between px-3 mt-3">
 
-        {/* Time */}
+        {/* Delivery Time */}
         <div className="text-subheading flex items-center gap-1 min-w-0">
-
           <FaClock
             size={11}
             className="shrink-0"
           />
 
           <span className="text-[11px] truncate">
-            20-30 Minutes
+            {deliveryTime}
           </span>
-
         </div>
 
-        {/* Delivery */}
+        {/* Price For Two */}
         <div className="text-subheading flex items-center gap-1 shrink-0">
-
           <FaRupeeSign size={11} />
 
           <span className="text-[11px]">
-            25 Delivery
+            {priceForTwo} for two
           </span>
-
         </div>
 
       </div>
-
     </div>
-  )
+  );
 }
