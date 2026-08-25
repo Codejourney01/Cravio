@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Autoplay } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -119,267 +118,316 @@ export default function Home() {
   return (
     <div className="w-full">
 
-      {/* ================= BANNER ================= */}
+      {/* ================================================= */}
+      {/* FULL PAGE LOADING */}
+      {/* ================================================= */}
 
-      <div className="flex items-center justify-center">
-        <Swiper
-          modules={[Autoplay]}
-          autoplay={{
-            delay: 2000,
-            disableOnInteraction: false,
-          }}
-          loop={true}
-          slidesPerView={1}
-          className="w-[98%]"
-        >
+      {loadingRestaurants ? (
+        <div className="min-h-[70vh] flex items-center justify-center px-4">
+          <div className="text-center">
 
-          {/* Banner 1 */}
-
-          <SwiperSlide>
-            <img
-              src={cofeebanner}
-              className="w-full h-[180px] md:h-[300px] object-cover rounded-md"
-              alt="Coffee Banner"
-            />
-          </SwiperSlide>
-
-          {/* Banner 2 */}
-
-          <SwiperSlide>
-            <img
-              src={banner2}
-              className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
-              alt="Banner 2"
-            />
-          </SwiperSlide>
-
-          {/* Banner 3 */}
-
-          <SwiperSlide>
-            <img
-              src={banner3}
-              className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
-              alt="Banner 3"
-            />
-          </SwiperSlide>
-
-        </Swiper>
-      </div>
-
-      {/* ================= CATEGORIES ================= */}
-
-      <section className="mt-9">
-
-        {/* Heading */}
-
-        <div className="px-3">
-          <Heading
-            headingname="Categories"
-            subheading="Explore your cravings, one category at a time."
-          />
-        </div>
-
-        {/* Category Swiper */}
-
-        <div className="mt-6 px-3">
-          <Swiper
-            modules={[FreeMode]}
-            freeMode={true}
-            slidesPerView={3}
-            spaceBetween={12}
-            breakpoints={{
-              768: {
-                slidesPerView: 4,
-                spaceBetween: 16,
-              },
-              1024: {
-                slidesPerView: 5,
-                spaceBetween: 20,
-              },
-            }}
-            className="w-full"
-          >
-
-            {categories.map((category, index) => (
-              <SwiperSlide key={index}>
-
-                <CategoryCard
-                  categoryname={category.categoryname}
-                  categoryimg={category.categoryimg}
-                  categoryrestuarants={category.categoryrestuarants}
-                />
-
-              </SwiperSlide>
-            ))}
-
-          </Swiper>
-        </div>
-
-      </section>
-
-      {/* ================= POPULAR RESTAURANTS ================= */}
-
-      <section className="mt-9">
-
-        {/* Heading */}
-
-        <div className="px-3">
-          <Heading
-            headingname="Popular Restaurants"
-            subheading="The places everyone is craving right now."
-          />
-        </div>
-
-        <div className="px-3 mt-5">
-
-          {/* ================= LOADING ================= */}
-
-          {loadingRestaurants && (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-sm md:text-base font-medium text-subheading animate-pulse">
-                {loadingMessage}
-              </p>
-            </div>
-          )}
-
-          {/* ================= ERROR ================= */}
-
-          {restaurantError && (
-            <p className="text-sm text-red-500">
-              {restaurantError}
+            <p className="text-sm md:text-base font-medium text-subheading animate-pulse">
+              {loadingMessage}
             </p>
-          )}
 
-          {/* ================= MOBILE GRID ================= */}
+          </div>
+        </div>
+      ) : restaurantError ? (
 
-          {!loadingRestaurants && !restaurantError && (
-            <div className="grid grid-cols-1 gap-4 md:hidden">
+        /* ================================================= */
+        /* ERROR */
+        /* ================================================= */
 
-              {restaurants.map((restaurant) => (
-                <RestaurantCard
-                  key={restaurant._id}
-                  Rname={restaurant.Rname}
-                  Rimage={restaurant.Rimage}
-                  rating={restaurant.rating}
-                  cuisines={restaurant.cuisines}
-                  deliveryTime={restaurant.deliveryTime}
-                  priceForTwo={restaurant.priceForTwo}
+        <div className="min-h-[70vh] flex items-center justify-center px-4">
+          <p className="text-sm text-red-500">
+            {restaurantError}
+          </p>
+        </div>
+
+      ) : (
+
+        /* ================================================= */
+        /* FULL HOME INTERFACE */
+        /* ================================================= */
+
+        <>
+          {/* ================================================= */}
+          {/* BANNER */}
+          {/* ================================================= */}
+
+          <div className="flex items-center justify-center">
+
+            <Swiper
+              modules={[Autoplay]}
+              autoplay={{
+                delay: 2000,
+                disableOnInteraction: false,
+              }}
+              loop={true}
+              slidesPerView={1}
+              className="w-[98%]"
+            >
+
+              {/* Banner 1 */}
+
+              <SwiperSlide>
+                <img
+                  src={cofeebanner}
+                  className="w-full h-[180px] md:h-[300px] object-cover rounded-md"
+                  alt="Coffee Banner"
                 />
-              ))}
+              </SwiperSlide>
+
+              {/* Banner 2 */}
+
+              <SwiperSlide>
+                <img
+                  src={banner2}
+                  className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+                  alt="Banner 2"
+                />
+              </SwiperSlide>
+
+              {/* Banner 3 */}
+
+              <SwiperSlide>
+                <img
+                  src={banner3}
+                  className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+                  alt="Banner 3"
+                />
+              </SwiperSlide>
+
+            </Swiper>
+
+          </div>
+
+          {/* ================================================= */}
+          {/* CATEGORIES */}
+          {/* ================================================= */}
+
+          <section className="mt-9">
+
+            {/* Heading */}
+
+            <div className="px-3">
+
+              <Heading
+                headingname="Categories"
+                subheading="Explore your cravings, one category at a time."
+              />
 
             </div>
-          )}
 
-          {/* ================= DESKTOP SWIPER ================= */}
+            {/* Category Swiper */}
 
-          {!loadingRestaurants && !restaurantError && (
-            <div className="hidden md:block relative">
+            <div className="mt-6 px-3">
 
               <Swiper
-                modules={[Navigation]}
-                navigation={{
-                  nextEl: ".restaurant-next",
-                  prevEl: ".restaurant-prev",
-                }}
+                modules={[FreeMode]}
+                freeMode={true}
                 slidesPerView={3}
-                spaceBetween={16}
+                spaceBetween={12}
                 breakpoints={{
-                  1024: {
+                  768: {
                     slidesPerView: 4,
+                    spaceBetween: 16,
+                  },
+                  1024: {
+                    slidesPerView: 5,
                     spaceBetween: 20,
                   },
                 }}
                 className="w-full"
               >
 
-                {restaurants.map((restaurant) => (
-                  <SwiperSlide key={restaurant._id}>
+                {categories.map((category, index) => (
 
-                    <RestaurantCard
-                      Rname={restaurant.Rname}
-                      Rimage={restaurant.Rimage}
-                      rating={restaurant.rating}
-                      cuisines={restaurant.cuisines}
-                      deliveryTime={restaurant.deliveryTime}
-                      priceForTwo={restaurant.priceForTwo}
+                  <SwiperSlide key={index}>
+
+                    <CategoryCard
+                      categoryname={category.categoryname}
+                      categoryimg={category.categoryimg}
+                      categoryrestuarants={
+                        category.categoryrestuarants
+                      }
                     />
 
                   </SwiperSlide>
+
                 ))}
 
               </Swiper>
 
-              {/* Previous Button */}
+            </div>
 
-              <button
-                className="
-                  restaurant-prev
-                  absolute
-                  left-0
-                  top-1/2
-                  -translate-y-1/2
-                  z-10
-                  w-9
-                  h-9
-                  bg-white
-                  shadow-md
-                  rounded-full
-                  flex
-                  items-center
-                  justify-center
-                  text-gray-600
-                  hover:text-[#FF5A1F]
-                  transition
-                "
-              >
-                <FiChevronLeft size={20} />
-              </button>
+          </section>
 
-              {/* Next Button */}
+          {/* ================================================= */}
+          {/* POPULAR RESTAURANTS */}
+          {/* ================================================= */}
 
-              <button
-                className="
-                  restaurant-next
-                  absolute
-                  right-0
-                  top-1/2
-                  -translate-y-1/2
-                  z-10
-                  w-9
-                  h-9
-                  bg-white
-                  shadow-md
-                  rounded-full
-                  flex
-                  items-center
-                  justify-center
-                  text-gray-600
-                  hover:text-[#FF5A1F]
-                  transition
-                "
-              >
-                <FiChevronRight size={20} />
-              </button>
+          <section className="mt-9">
+
+            {/* Heading */}
+
+            <div className="px-3">
+
+              <Heading
+                headingname="Popular Restaurants"
+                subheading="The places everyone is craving right now."
+              />
 
             </div>
-          )}
 
-        </div>
+            <div className="px-3 mt-5">
 
-      </section>
+              {/* ================================================= */}
+              {/* MOBILE GRID */}
+              {/* ================================================= */}
 
-      {/* ================= PICKED JUST FOR YOU ================= */}
+              <div className="grid grid-cols-1 gap-4 md:hidden">
 
-      <section>
+                {restaurants.map((restaurant) => (
 
-        <div className="px-3 mt-7">
-          <Heading
-            headingname="Picked Just For You"
-            subheading="Personalized recommendations from Cravio."
-          />
-        </div>
+                  <RestaurantCard
+                    key={restaurant._id}
+                    Rname={restaurant.Rname}
+                    Rimage={restaurant.Rimage}
+                    rating={restaurant.rating}
+                    cuisines={restaurant.cuisines}
+                    deliveryTime={restaurant.deliveryTime}
+                    priceForTwo={restaurant.priceForTwo}
+                  />
 
-      </section>
+                ))}
+
+              </div>
+
+              {/* ================================================= */}
+              {/* DESKTOP SWIPER */}
+              {/* ================================================= */}
+
+              <div className="hidden md:block relative">
+
+                <Swiper
+                  modules={[Navigation]}
+                  navigation={{
+                    nextEl: ".restaurant-next",
+                    prevEl: ".restaurant-prev",
+                  }}
+                  slidesPerView={3}
+                  spaceBetween={16}
+                  breakpoints={{
+                    1024: {
+                      slidesPerView: 4,
+                      spaceBetween: 20,
+                    },
+                  }}
+                  className="w-full"
+                >
+
+                  {restaurants.map((restaurant) => (
+
+                    <SwiperSlide key={restaurant._id}>
+
+                      <RestaurantCard
+                        Rname={restaurant.Rname}
+                        Rimage={restaurant.Rimage}
+                        rating={restaurant.rating}
+                        cuisines={restaurant.cuisines}
+                        deliveryTime={restaurant.deliveryTime}
+                        priceForTwo={restaurant.priceForTwo}
+                      />
+
+                    </SwiperSlide>
+
+                  ))}
+
+                </Swiper>
+
+                {/* Previous Button */}
+
+                <button
+                  className="
+                    restaurant-prev
+                    absolute
+                    left-0
+                    top-1/2
+                    -translate-y-1/2
+                    z-10
+                    w-9
+                    h-9
+                    bg-white
+                    shadow-md
+                    rounded-full
+                    flex
+                    items-center
+                    justify-center
+                    text-gray-600
+                    hover:text-[#FF5A1F]
+                    transition
+                  "
+                >
+
+                  <FiChevronLeft size={20} />
+
+                </button>
+
+                {/* Next Button */}
+
+                <button
+                  className="
+                    restaurant-next
+                    absolute
+                    right-0
+                    top-1/2
+                    -translate-y-1/2
+                    z-10
+                    w-9
+                    h-9
+                    bg-white
+                    shadow-md
+                    rounded-full
+                    flex
+                    items-center
+                    justify-center
+                    text-gray-600
+                    hover:text-[#FF5A1F]
+                    transition
+                  "
+                >
+
+                  <FiChevronRight size={20} />
+
+                </button>
+
+              </div>
+
+            </div>
+
+          </section>
+
+          {/* ================================================= */}
+          {/* PICKED JUST FOR YOU */}
+          {/* ================================================= */}
+
+          <section>
+
+            <div className="px-3 mt-7">
+
+              <Heading
+                headingname="Picked Just For You"
+                subheading="Personalized recommendations from Cravio."
+              />
+
+            </div>
+
+          </section>
+
+        </>
+
+      )}
 
     </div>
   );
