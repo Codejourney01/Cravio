@@ -16,7 +16,7 @@ export default function RestaurantCard({
       <img
         src={Rimage}
         alt={Rname}
-        className="w-full h-[150px] object-cover object-top"
+        className="w-full h-[150px] object-cover"
       />
 
       {/* Restaurant Name + Rating */}
