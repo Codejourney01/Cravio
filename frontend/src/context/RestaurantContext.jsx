@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
 import { getRestaurants } from "../api/restuarantapi";
 
 const RestaurantContext = createContext();
@@ -16,6 +22,7 @@ export function RestaurantProvider({ children }) {
         setRestaurants(data.restaurants || []);
       } catch (error) {
         console.error("Failed to fetch restaurants:", error);
+
         setRestaurantError("Failed to load restaurants");
       } finally {
         setLoadingRestaurants(false);
@@ -25,16 +32,25 @@ export function RestaurantProvider({ children }) {
     fetchRestaurants();
   }, []);
 
-  // Popular = rating 4 or above
+  // Popular restaurants
   const popularRestaurants = restaurants.filter(
     (restaurant) => restaurant.rating >= 4
   );
+
+  // Get restaurant by ID
+  const getRestaurantById = (id) => {
+    return restaurants.find(
+      (restaurant) =>
+        restaurant._id === id || restaurant.id === id
+    );
+  };
 
   return (
     <RestaurantContext.Provider
       value={{
         restaurants,
         popularRestaurants,
+        getRestaurantById,
         loadingRestaurants,
         restaurantError,
       }}

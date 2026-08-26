@@ -12,7 +12,10 @@ import {
 
 import { useTheme } from "../../context/ThemeContext";
 
-export default function Nav({ setIsSidebarOpen }) {
+export default function Nav({
+  setIsSidebarOpen,
+  showSearch = true,
+})  {
   const { isDark, toggleTheme } = useTheme();
 
   return (
@@ -113,47 +116,47 @@ export default function Nav({ setIsSidebarOpen }) {
         </div>
 
         {/* ================= SEARCH BAR ================= */}
-        <div className="flex w-full items-center justify-center min-[721px]:flex-1 min-[721px]:px-10">
-          <div
-            className="
-              flex
-              h-[40px]
-              w-[95%]
-              items-center
-              justify-center
-              rounded-md
-              bg-white
-              px-4
-              mt-4
-              md:mt-0
-              shadow-[0_2px_12px_rgba(0,0,0,0.08)]
-              min-[721px]:w-full
-              min-[721px]:max-w-[500px]
-            "
-          >
-            {/* Search Icon */}
-            <FiSearch
-              className="shrink-0 text-subheading"
-              size={14}
-              strokeWidth={1.8}
-            />
+        {showSearch && (
+  <div className="flex w-full items-center justify-center min-[721px]:flex-1 min-[721px]:px-10">
+    <div
+      className="
+        flex
+        h-[40px]
+        w-[95%]
+        items-center
+        justify-center
+        rounded-md
+        bg-white
+        px-4
+        mt-4
+        md:mt-0
+        shadow-[0_2px_12px_rgba(0,0,0,0.08)]
+        min-[721px]:w-full
+        min-[721px]:max-w-[500px]
+      "
+    >
+      <FiSearch
+        className="shrink-0 text-subheading"
+        size={14}
+        strokeWidth={1.8}
+      />
 
-            {/* Input */}
-            <input
-              type="text"
-              placeholder="What are you craving for...?"
-              className="
-                ml-2
-                w-full
-                bg-transparent
-                text-[12px]
-                text-heading
-                outline-none
-                placeholder:text-subheading
-              "
-            />
-          </div>
-        </div>
+      <input
+        type="text"
+        placeholder="What are you craving for...?"
+        className="
+          ml-2
+          w-full
+          bg-transparent
+          text-[12px]
+          text-heading
+          outline-none
+          placeholder:text-subheading
+        "
+      />
+    </div>
+  </div>
+)}
 
         {/* ================= DESKTOP ACTIONS ================= */}
         <div className="hidden min-[721px]:flex items-center gap-3">

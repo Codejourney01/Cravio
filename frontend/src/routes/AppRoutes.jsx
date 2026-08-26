@@ -20,65 +20,31 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-
         {/* Main Cravio Layout */}
         <Route element={<MainLayout />}>
-
           <Route path="/" element={<Home />} />
 
-          <Route
-            path="/restaurants"
-            element={<Restaurants />}
-          />
+          <Route path="/restaurants" element={<Restaurants />} />
 
-          <Route
-            path="/restaurant/:id"
-            element={<RestaurantDetails />}
-          />
+          <Route path="/restaurantdetail/:id" element={<RestaurantDetails />} />
 
-          <Route
-            path="/near-you"
-            element={<NearYou />}
-          />
+          <Route path="/near-you" element={<NearYou />} />
 
-          <Route
-            path="/favorites"
-            element={<Favorites />}
-          />
+          <Route path="/favorites" element={<Favorites />} />
 
-          <Route
-            path="/orders"
-            element={<Orders />}
-          />
+          <Route path="/orders" element={<Orders />} />
 
-          <Route
-            path="/cart"
-            element={<Cart />}
-          />
+          <Route path="/cart" element={<Cart />} />
 
-          <Route
-            path="/settings"
-            element={<Settings />}
-          />
+          <Route path="/settings" element={<Settings />} />
 
-          <Route
-            path="/profile"
-            element={<Profile />}
-          />
-
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         {/* Authentication */}
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+        <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );

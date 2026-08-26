@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef } from "react";
+
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Autoplay } from "swiper/modules";
+
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import "swiper/css";
@@ -37,12 +39,11 @@ export default function Home() {
   // =================================================
   // RANDOMIZE ALL POPULAR RESTAURANTS
   // =================================================
-  // IMPORTANT:
-  // No slice() here.
-  // Every popular restaurant will be shown.
 
   const randomPopularRestaurants = useMemo(() => {
-    return [...popularRestaurants].sort(() => Math.random() - 0.5);
+    return [...popularRestaurants].sort(
+      () => Math.random() - 0.5
+    );
   }, [popularRestaurants]);
 
   // =================================================
@@ -68,8 +69,11 @@ export default function Home() {
 
     const swiper = restaurantSwiperRef.current;
 
-    swiper.params.navigation.prevEl = restaurantPrevRef.current;
-    swiper.params.navigation.nextEl = restaurantNextRef.current;
+    swiper.params.navigation.prevEl =
+      restaurantPrevRef.current;
+
+    swiper.params.navigation.nextEl =
+      restaurantNextRef.current;
 
     swiper.navigation.destroy();
     swiper.navigation.init();
@@ -279,7 +283,9 @@ export default function Home() {
   if (restaurantError) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
-        <p className="text-sm text-red-500">{restaurantError}</p>
+        <p className="text-sm text-red-500">
+          {restaurantError}
+        </p>
       </div>
     );
   }
@@ -378,7 +384,9 @@ export default function Home() {
                 <CategoryCard
                   categoryname={category.categoryname}
                   categoryimg={category.categoryimg}
-                  categoryrestuarants={category.categoryrestuarants}
+                  categoryrestuarants={
+                    category.categoryrestuarants
+                  }
                 />
               </SwiperSlide>
             ))}
@@ -407,6 +415,7 @@ export default function Home() {
             {randomPopularRestaurants.map((restaurant) => (
               <RestaurantCard
                 key={restaurant._id}
+                id={restaurant._id}
                 Rname={restaurant.Rname}
                 Rimage={restaurant.Rimage}
                 rating={restaurant.rating}
@@ -440,6 +449,7 @@ export default function Home() {
               {randomPopularRestaurants.map((restaurant) => (
                 <SwiperSlide key={restaurant._id}>
                   <RestaurantCard
+                    id={restaurant._id}
                     Rname={restaurant.Rname}
                     Rimage={restaurant.Rimage}
                     rating={restaurant.rating}
@@ -459,7 +469,24 @@ export default function Home() {
               ref={restaurantPrevRef}
               type="button"
               aria-label="Previous restaurants"
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white shadow-md rounded-full flex items-center justify-center text-gray-600 hover:text-[#FF5A1F] transition"
+              className="
+                absolute
+                left-0
+                top-1/2
+                -translate-y-1/2
+                z-10
+                w-9
+                h-9
+                bg-white
+                shadow-md
+                rounded-full
+                flex
+                items-center
+                justify-center
+                text-gray-600
+                hover:text-[#FF5A1F]
+                transition
+              "
             >
               <FiChevronLeft size={20} />
             </button>
@@ -472,7 +499,24 @@ export default function Home() {
               ref={restaurantNextRef}
               type="button"
               aria-label="Next restaurants"
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white shadow-md rounded-full flex items-center justify-center text-gray-600 hover:text-[#FF5A1F] transition"
+              className="
+                absolute
+                right-0
+                top-1/2
+                -translate-y-1/2
+                z-10
+                w-9
+                h-9
+                bg-white
+                shadow-md
+                rounded-full
+                flex
+                items-center
+                justify-center
+                text-gray-600
+                hover:text-[#FF5A1F]
+                transition
+              "
             >
               <FiChevronRight size={20} />
             </button>
