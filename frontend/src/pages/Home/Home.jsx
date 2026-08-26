@@ -30,20 +30,15 @@ export default function Home() {
   // RESTAURANTS FROM CONTEXT
   // =================================================
 
-  const {
-    popularRestaurants,
-    loadingRestaurants,
-    restaurantError,
-  } = useRestaurants();
+  const { popularRestaurants, loadingRestaurants, restaurantError } =
+    useRestaurants();
 
   // =================================================
   // RANDOMIZE ALL POPULAR RESTAURANTS
   // =================================================
 
   const randomPopularRestaurants = useMemo(() => {
-    return [...popularRestaurants].sort(
-      () => Math.random() - 0.5
-    );
+    return [...popularRestaurants].sort(() => Math.random() - 0.5);
   }, [popularRestaurants]);
 
   // =================================================
@@ -69,11 +64,9 @@ export default function Home() {
 
     const swiper = restaurantSwiperRef.current;
 
-    swiper.params.navigation.prevEl =
-      restaurantPrevRef.current;
+    swiper.params.navigation.prevEl = restaurantPrevRef.current;
 
-    swiper.params.navigation.nextEl =
-      restaurantNextRef.current;
+    swiper.params.navigation.nextEl = restaurantNextRef.current;
 
     swiper.navigation.destroy();
     swiper.navigation.init();
@@ -283,9 +276,7 @@ export default function Home() {
   if (restaurantError) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
-        <p className="text-sm text-red-500">
-          {restaurantError}
-        </p>
+        <p className="text-sm text-red-500">{restaurantError}</p>
       </div>
     );
   }
@@ -384,9 +375,7 @@ export default function Home() {
                 <CategoryCard
                   categoryname={category.categoryname}
                   categoryimg={category.categoryimg}
-                  categoryrestuarants={
-                    category.categoryrestuarants
-                  }
+                  categoryrestuarants={category.categoryrestuarants}
                 />
               </SwiperSlide>
             ))}
@@ -403,6 +392,7 @@ export default function Home() {
           <Heading
             headingname="Popular Restaurants"
             subheading="The places everyone is craving right now."
+            viewAllLink="/restaurants"
           />
         </div>
 
@@ -423,7 +413,6 @@ export default function Home() {
                 deliveryTime={restaurant.deliveryTime}
                 priceForTwo={restaurant.priceForTwo}
                 Rbanner={restaurant.Rbanner}
-
               />
             ))}
           </div>
