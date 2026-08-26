@@ -26,7 +26,10 @@ function AppRoutes() {
 
           <Route path="/restaurants" element={<Restaurants />} />
 
-          <Route path="/restaurantdetail/:id" element={<RestaurantDetails />} />
+  <Route
+  path="/restaurantdetail/:id"
+  element={<RestaurantDetails />}
+/>
 
           <Route path="/near-you" element={<NearYou />} />
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   FiChevronLeft,
@@ -16,14 +16,35 @@ import "swiper/css";
 import { useRestaurants } from "../../context/RestaurantContext";
 
 export default function RestaurantDetails() {
+  // =================================================
+  // GET RESTAURANT ID FROM URL
+  // =================================================
+
   const { id } = useParams();
 
+  const navigate = useNavigate();
+
+  // =================================================
+  // GET RESTAURANTS FROM CONTEXT
+  // =================================================
+
   const {
-    getRestaurantById,
+    restaurants,
     loadingRestaurants,
+    restaurantError,
   } = useRestaurants();
 
-  const restaurant = getRestaurantById(id);
+  // =================================================
+  // FIND RESTAURANT USING ID
+  // =================================================
+
+  const restaurant = restaurants.find(
+    (item) => String(item._id) === String(id)
+  );
+
+  // =================================================
+  // TAB STATE
+  // =================================================
 
   const [activeTab, setActiveTab] = useState("For You");
 
@@ -35,7 +56,9 @@ export default function RestaurantDetails() {
     "Offers",
   ];
 
-  // ================= LOADING =================
+  // =================================================
+  // LOADING
+  // =================================================
 
   if (loadingRestaurants) {
     return (
@@ -47,11 +70,33 @@ export default function RestaurantDetails() {
     );
   }
 
-  // ================= NOT FOUND =================
+  // =================================================
+  // ERROR
+  // =================================================
+
+  if (restaurantError) {
+    return (
+      <div className="flex min-h-[300px] items-center justify-center px-4">
+        <div className="text-center">
+          <h3 className="text-base font-semibold text-heading">
+            Something went wrong
+          </h3>
+
+          <p className="mt-1 text-xs text-red-500">
+            {restaurantError}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // =================================================
+  // RESTAURANT NOT FOUND
+  // =================================================
 
   if (!restaurant) {
     return (
-      <div className="flex min-h-[300px] items-center justify-center">
+      <div className="flex min-h-[300px] items-center justify-center px-4">
         <div className="text-center">
           <h3 className="text-base font-semibold text-heading">
             Restaurant not found
@@ -60,21 +105,38 @@ export default function RestaurantDetails() {
           <p className="mt-1 text-xs text-subheading">
             The restaurant you're looking for doesn't exist.
           </p>
+
+          <button
+            type="button"
+            onClick={() => navigate("/restaurants")}
+            className="mt-4 rounded-md bg-[#FF5A1F] px-4 py-2 text-xs text-white transition hover:opacity-90"
+          >
+            Back to Restaurants
+          </button>
         </div>
       </div>
     );
   }
 
+  // =================================================
+  // RESTAURANT DETAILS
+  // =================================================
+
   return (
     <>
-      {/* ================= BACK BUTTON ================= */}
+      {/* =================================================
+          BACK BUTTON
+      ================================================= */}
 
       <div className="md:px-4">
         <button
           type="button"
-          onClick={() => window.history.back()}
+          onClick={() => navigate(-1)}
+          aria-label="Go back"
           className="
-            flex h-8 w-8
+            flex
+            h-8
+            w-8
             items-center
             justify-center
             text-heading
@@ -89,7 +151,9 @@ export default function RestaurantDetails() {
         </button>
       </div>
 
-      {/* ================= RESTAURANT INFO ================= */}
+      {/* =================================================
+          RESTAURANT INFO
+      ================================================= */}
 
       <div className="mt-5 px-3 md:px-7 md:pr-9">
 
@@ -105,7 +169,9 @@ export default function RestaurantDetails() {
             type="button"
             aria-label="Add to favourites"
             className="
-              flex h-7 w-7
+              flex
+              h-7
+              w-7
               items-center
               justify-center
               rounded-full
@@ -162,15 +228,19 @@ export default function RestaurantDetails() {
           </div>
 
         </div>
+
       </div>
 
-      {/* ================= RESTAURANT SEARCH ================= */}
+      {/* =================================================
+          RESTAURANT SEARCH
+      ================================================= */}
 
       <div className="mt-5 flex w-full items-center justify-center">
 
         <div
           className="
-            flex h-[40px]
+            flex
+            h-[40px]
             w-[95%]
             items-center
             rounded-md
@@ -201,11 +271,12 @@ export default function RestaurantDetails() {
           />
 
         </div>
+
       </div>
 
-      {/* ================= TABS ================= */}
-
-      {/* MOBILE - SWIPER */}
+      {/* =================================================
+          TABS - MOBILE
+      ================================================= */}
 
       <div className="mt-6 px-3 md:hidden">
 
@@ -216,7 +287,6 @@ export default function RestaurantDetails() {
         >
 
           {tabs.map((tab) => (
-
             <SwiperSlide
               key={tab}
               className="!w-auto"
@@ -259,21 +329,21 @@ export default function RestaurantDetails() {
               </button>
 
             </SwiperSlide>
-
           ))}
 
         </Swiper>
 
       </div>
 
-      {/* DESKTOP - NORMAL TABS */}
+      {/* =================================================
+          TABS - DESKTOP
+      ================================================= */}
 
       <div className="mt-6 hidden px-3 md:block md:px-7 md:pr-9">
 
         <div className="flex items-center gap-7">
 
           {tabs.map((tab) => (
-
             <button
               key={tab}
               type="button"
@@ -309,7 +379,6 @@ export default function RestaurantDetails() {
               )}
 
             </button>
-
           ))}
 
         </div>
