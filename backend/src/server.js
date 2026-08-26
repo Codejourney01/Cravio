@@ -5,6 +5,7 @@ const restaurantRoutes = require("./routes/RestaurantRoutes");
 const app = express();
 const connectDB = require("./config/db");
 const uploadRoutes = require("./routes/uploadroute");
+const itemRoutes = require("./routes/itemroute");
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/items", itemRoutes);
 
 const PORT = process.env.PORT || 5001;
 connectDB();

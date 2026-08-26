@@ -10,13 +10,16 @@ import "@fontsource/inter/700.css";
 
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 import { RestaurantProvider } from "./context/RestaurantContext.jsx";
+import { ItemProvider } from "./context/ItemContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ThemeProvider>
       <RestaurantProvider>
-        <App />
-      </RestaurantProvider>
+  <ItemProvider>
+    <App />
+  </ItemProvider>
+</RestaurantProvider>
     </ThemeProvider>
   </StrictMode>
 );
