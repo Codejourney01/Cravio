@@ -65,7 +65,9 @@ const createRestaurant = async (req, res) => {
 // Get All Restaurants
 const getRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find();
+    const restaurants = await Restaurant.find()
+  .select("Rname Rimage rating cuisines deliveryTime priceForTwo")
+  .lean();
 
     res.status(200).json({
       success: true,
