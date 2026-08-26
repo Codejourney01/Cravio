@@ -1,18 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import {
   FiChevronLeft,
   FiClock,
   FiHeart,
   FiSearch,
 } from "react-icons/fi";
-
 import { FaStar } from "react-icons/fa";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-
 import { useRestaurants } from "../../context/RestaurantContext";
 
 export default function RestaurantDetails() {
@@ -21,7 +17,6 @@ export default function RestaurantDetails() {
   // =================================================
 
   const { id } = useParams();
-
   const navigate = useNavigate();
 
   // =================================================
@@ -57,17 +52,136 @@ export default function RestaurantDetails() {
   ];
 
   // =================================================
-  // LOADING
+  // BANNER LOADING STATE
+  // =================================================
+
+  const [bannerLoading, setBannerLoading] = useState(true);
+
+  // =================================================
+  // RESTAURANT DETAILS SKELETON
+  // =================================================
+
+  const RestaurantDetailsSkeleton = () => {
+    return (
+      <div className="w-full">
+
+        {/* =================================================
+            BACK BUTTON SKELETON
+        ================================================= */}
+
+        <div className="md:px-4">
+          <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
+        </div>
+
+        {/* =================================================
+            RESTAURANT BANNER SKELETON
+        ================================================= */}
+
+        <div className="mt-4 w-full px-3 md:px-7 md:pr-9">
+          <div
+            className="
+              h-[120px]
+              w-full
+              animate-pulse
+              rounded-md
+              bg-gray-200
+              md:h-[197px]
+            "
+          />
+        </div>
+
+        {/* =================================================
+            RESTAURANT INFO SKELETON
+        ================================================= */}
+
+        <div className="mt-5 px-3 md:px-7 md:pr-9">
+
+          {/* Restaurant Name + Favourite */}
+
+          <div className="flex items-center justify-between">
+            <div className="h-6 w-[45%] animate-pulse rounded bg-gray-200 md:h-8 md:w-[30%]" />
+
+            <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200" />
+          </div>
+
+          {/* Rating + Delivery Time */}
+
+          <div className="mt-3 flex items-center gap-4">
+            <div className="h-3 w-[110px] animate-pulse rounded bg-gray-200" />
+
+            <div className="h-3 w-[90px] animate-pulse rounded bg-gray-200" />
+          </div>
+        </div>
+
+        {/* =================================================
+            SEARCH BAR SKELETON
+        ================================================= */}
+
+        <div className="mt-5 flex w-full items-center justify-center">
+          <div
+            className="
+              flex
+              h-[40px]
+              w-[95%]
+              animate-pulse
+              items-center
+              rounded-md
+              bg-gray-200
+              px-4
+            "
+          >
+            <div className="h-3 w-3 rounded-full bg-gray-300" />
+
+            <div className="ml-2 h-3 w-[130px] rounded bg-gray-300" />
+          </div>
+        </div>
+
+        {/* =================================================
+            MOBILE TABS SKELETON
+        ================================================= */}
+
+        <div className="mt-6 px-3 md:hidden">
+          <Swiper
+            slidesPerView="auto"
+            spaceBetween={28}
+            className="w-full"
+          >
+            {[1, 2, 3, 4, 5].map((item) => (
+              <SwiperSlide
+                key={item}
+                className="!w-auto"
+              >
+                <div className="h-4 w-[65px] animate-pulse rounded bg-gray-200" />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+
+        {/* =================================================
+            DESKTOP TABS SKELETON
+        ================================================= */}
+
+        <div className="mt-6 hidden px-3 md:block md:px-7 md:pr-9">
+          <div className="flex items-center gap-7">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <div
+                key={item}
+                className="h-4 w-[70px] animate-pulse rounded bg-gray-200"
+              />
+            ))}
+          </div>
+        </div>
+
+      </div>
+    );
+  };
+
+  // =================================================
+  // API LOADING
   // =================================================
 
   if (loadingRestaurants) {
-    return (
-      <div className="flex min-h-[300px] items-center justify-center">
-        <p className="text-sm text-subheading">
-          Loading restaurant...
-        </p>
-      </div>
-    );
+    return <RestaurantDetailsSkeleton />;
   }
 
   // =================================================
@@ -78,6 +192,7 @@ export default function RestaurantDetails() {
     return (
       <div className="flex min-h-[300px] items-center justify-center px-4">
         <div className="text-center">
+
           <h3 className="text-base font-semibold text-heading">
             Something went wrong
           </h3>
@@ -85,6 +200,7 @@ export default function RestaurantDetails() {
           <p className="mt-1 text-xs text-red-500">
             {restaurantError}
           </p>
+
         </div>
       </div>
     );
@@ -98,6 +214,7 @@ export default function RestaurantDetails() {
     return (
       <div className="flex min-h-[300px] items-center justify-center px-4">
         <div className="text-center">
+
           <h3 className="text-base font-semibold text-heading">
             Restaurant not found
           </h3>
@@ -109,10 +226,21 @@ export default function RestaurantDetails() {
           <button
             type="button"
             onClick={() => navigate("/restaurants")}
-            className="mt-4 rounded-md bg-[#FF5A1F] px-4 py-2 text-xs text-white transition hover:opacity-90"
+            className="
+              mt-4
+              rounded-md
+              bg-[#FF5A1F]
+              px-4
+              py-2
+              text-xs
+              text-white
+              transition
+              hover:opacity-90
+            "
           >
             Back to Restaurants
           </button>
+
         </div>
       </div>
     );
@@ -152,12 +280,69 @@ export default function RestaurantDetails() {
       </div>
 
       {/* =================================================
+          RESTAURANT BANNER
+      ================================================= */}
+
+      <div className="mt-4 w-full px-3 md:px-7 md:pr-9">
+
+        <div className="relative h-[120px] w-full overflow-hidden rounded-md md:h-[197px]">
+
+          {/* =================================================
+              BANNER SKELETON
+          ================================================= */}
+
+          {bannerLoading && (
+            <div
+              className="
+                absolute
+                inset-0
+                z-10
+                animate-pulse
+                rounded-md
+                bg-gray-200
+              "
+            />
+          )}
+
+          {/* =================================================
+              BANNER IMAGE
+          ================================================= */}
+
+          <img
+            src={restaurant.Rbanner}
+            alt={`${restaurant.Rname} banner`}
+            loading="eager"
+            decoding="async"
+            onLoad={() => setBannerLoading(false)}
+            onError={() => setBannerLoading(false)}
+            className={`
+              h-full
+              w-full
+              rounded-md
+              object-cover
+              transition-opacity
+              duration-300
+              ${
+                bannerLoading
+                  ? "opacity-0"
+                  : "opacity-100"
+              }
+            `}
+          />
+
+        </div>
+
+      </div>
+
+      {/* =================================================
           RESTAURANT INFO
       ================================================= */}
 
       <div className="mt-5 px-3 md:px-7 md:pr-9">
 
-        {/* Restaurant Name + Favourite */}
+        {/* =================================================
+            RESTAURANT NAME + FAVOURITE
+        ================================================= */}
 
         <div className="flex items-center justify-between">
 
@@ -191,7 +376,9 @@ export default function RestaurantDetails() {
 
         </div>
 
-        {/* Rating + Delivery Time */}
+        {/* =================================================
+            RATING + DELIVERY TIME
+        ================================================= */}
 
         <div className="mt-2 flex items-center gap-4">
 

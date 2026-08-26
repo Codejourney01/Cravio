@@ -422,6 +422,8 @@ export default function Home() {
                 cuisines={restaurant.cuisines}
                 deliveryTime={restaurant.deliveryTime}
                 priceForTwo={restaurant.priceForTwo}
+                Rbanner={restaurant.Rbanner}
+
               />
             ))}
           </div>
@@ -456,6 +458,7 @@ export default function Home() {
                     cuisines={restaurant.cuisines}
                     deliveryTime={restaurant.deliveryTime}
                     priceForTwo={restaurant.priceForTwo}
+                    Rbanner={restaurant.Rbanner}
                   />
                 </SwiperSlide>
               ))}

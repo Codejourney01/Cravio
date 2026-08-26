@@ -1,5 +1,6 @@
 const Restaurant = require("../models/restaurants");
 const cloudinary = require("../config/cloudinary");
+
 const uploadToCloudinary = (buffer, folder) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -19,7 +20,10 @@ const uploadToCloudinary = (buffer, folder) => {
   });
 };
 
-// Create Restaurant
+// ============================================================
+// CREATE RESTAURANT
+// ============================================================
+
 const createRestaurant = async (req, res) => {
   try {
     if (!req.files?.Rimage || !req.files?.Rbanner) {
@@ -41,9 +45,7 @@ const createRestaurant = async (req, res) => {
 
     const restaurant = await Restaurant.create({
       ...req.body,
-
       Rimage: imageResult.secure_url,
-
       Rbanner: bannerResult.secure_url,
     });
 
@@ -62,12 +64,17 @@ const createRestaurant = async (req, res) => {
   }
 };
 
-// Get All Restaurants
+// ============================================================
+// GET ALL RESTAURANTS
+// ============================================================
+
 const getRestaurants = async (req, res) => {
   try {
     const restaurants = await Restaurant.find()
-  .select("Rname Rimage rating cuisines deliveryTime priceForTwo")
-  .lean();
+      .select(
+        "Rname Rimage Rbanner rating cuisines deliveryTime priceForTwo"
+      )
+      .lean();
 
     res.status(200).json({
       success: true,
@@ -75,6 +82,8 @@ const getRestaurants = async (req, res) => {
       restaurants,
     });
   } catch (error) {
+    console.error("Get restaurants error:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
@@ -82,7 +91,10 @@ const getRestaurants = async (req, res) => {
   }
 };
 
-// Get Restaurant By ID
+// ============================================================
+// GET RESTAURANT BY ID
+// ============================================================
+
 const getRestaurantById = async (req, res) => {
   try {
     const restaurant = await Restaurant.findById(req.params.id);
@@ -99,6 +111,8 @@ const getRestaurantById = async (req, res) => {
       restaurant,
     });
   } catch (error) {
+    console.error("Get restaurant by ID error:", error);
+
     res.status(500).json({
       success: false,
       message: error.message,
