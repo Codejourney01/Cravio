@@ -20,6 +20,12 @@ app.use("/api/upload", uploadRoutes);
 
 const PORT = process.env.PORT || 5001;
 connectDB();
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Cravio backend is healthy",
+  });
+});
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Cravio server running on port ${PORT}`);
 });
