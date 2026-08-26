@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Autoplay } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -35,6 +35,16 @@ export default function Home() {
   } = useRestaurants();
 
   // =================================================
+  // RANDOM POPULAR RESTAURANTS
+  // =================================================
+
+  const randomPopularRestaurants = useMemo(() => {
+    return [...popularRestaurants]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 4);
+  }, [popularRestaurants]);
+
+  // =================================================
   // RESTAURANT SWIPER BUTTON REFS
   // =================================================
 
@@ -63,7 +73,7 @@ export default function Home() {
     swiper.navigation.destroy();
     swiper.navigation.init();
     swiper.navigation.update();
-  }, [popularRestaurants]);
+  }, [randomPopularRestaurants]);
 
   // =================================================
   // CATEGORIES
@@ -186,7 +196,6 @@ export default function Home() {
                   slidesPerView: 4,
                   spaceBetween: 16,
                 },
-
                 1024: {
                   slidesPerView: 5,
                   spaceBetween: 20,
@@ -356,7 +365,6 @@ export default function Home() {
                 slidesPerView: 4,
                 spaceBetween: 16,
               },
-
               1024: {
                 slidesPerView: 5,
                 spaceBetween: 20,
@@ -395,7 +403,7 @@ export default function Home() {
           ================================================= */}
 
           <div className="grid grid-cols-1 gap-4 md:hidden">
-            {popularRestaurants.map((restaurant) => (
+            {randomPopularRestaurants.map((restaurant) => (
               <RestaurantCard
                 key={restaurant._id}
                 Rname={restaurant.Rname}
@@ -428,7 +436,7 @@ export default function Home() {
               }}
               className="w-full"
             >
-              {popularRestaurants.map((restaurant) => (
+              {randomPopularRestaurants.map((restaurant) => (
                 <SwiperSlide key={restaurant._id}>
                   <RestaurantCard
                     Rname={restaurant.Rname}

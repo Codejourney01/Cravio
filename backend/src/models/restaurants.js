@@ -1,33 +1,40 @@
-const mongoose= require("mongoose");
+const mongoose = require("mongoose");
 
-const restuarantschema= new mongoose.Schema({
+const restaurantSchema = new mongoose.Schema(
+  {
+    // ================= BASIC INFORMATION =================
+    Rname: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-    Rname:{
-        type:String,
-        required:true,
-        trim:true
+    Rdescription: {
+      type: String,
+      required: true,
+      trim: true,
     },
-    Rdescription:{
-        type:String,
-        required:true,
-        trim:true
-    }
-    ,
-    Rimage:{
-        type:String,
-        required:true
+
+    Rimage: {
+      type: String,
+      required: true,
     },
-    Rbanner:{
-          type: String,
-         required: true,
+
+    Rbanner: {
+      type: String,
+      required: true,
     },
-    rating:{
+
+    // ================= RATING =================
+    rating: {
       type: Number,
       default: 0,
       min: 0,
       max: 5,
     },
-      deliveryTime: {
+
+    // ================= DELIVERY =================
+    deliveryTime: {
       type: String,
       required: true,
     },
@@ -37,11 +44,14 @@ const restuarantschema= new mongoose.Schema({
       required: true,
     },
 
+    // ================= FOOD =================
     cuisines: [
       {
         type: String,
       },
     ],
+
+    // ================= LOCATION =================
     location: {
       address: {
         type: String,
@@ -54,14 +64,28 @@ const restuarantschema= new mongoose.Schema({
       },
     },
 
+    // ================= RESTAURANT STATUS =================
     isOpen: {
       type: Boolean,
       default: true,
     },
+
+    // ================= ANALYTICS =================
+    views: {
+      type: Number,
+      default: 0,
+    },
+
+    totalOrders: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
-})
-const Restaurant = mongoose.model("Restaurant", restuarantschema);
+  }
+);
+
+const Restaurant = mongoose.model("Restaurant", restaurantSchema);
 
 module.exports = Restaurant;
