@@ -35,17 +35,18 @@ export default function Home() {
   } = useRestaurants();
 
   // =================================================
-  // RANDOM POPULAR RESTAURANTS
+  // RANDOMIZE ALL POPULAR RESTAURANTS
   // =================================================
+  // IMPORTANT:
+  // No slice() here.
+  // Every popular restaurant will be shown.
 
   const randomPopularRestaurants = useMemo(() => {
-    return [...popularRestaurants]
-      .sort(() => Math.random() - 0.5)
-      .slice(0, 4);
+    return [...popularRestaurants].sort(() => Math.random() - 0.5);
   }, [popularRestaurants]);
 
   // =================================================
-  // RESTAURANT SWIPER BUTTON REFS
+  // RESTAURANT SWIPER REFS
   // =================================================
 
   const restaurantPrevRef = useRef(null);
@@ -224,7 +225,7 @@ export default function Home() {
           </div>
 
           <div className="px-3 mt-5">
-            {/* Mobile */}
+            {/* Mobile Skeleton */}
 
             <div className="grid grid-cols-1 gap-4 md:hidden">
               {[1, 2, 3, 4].map((item) => (
@@ -232,7 +233,7 @@ export default function Home() {
               ))}
             </div>
 
-            {/* Desktop */}
+            {/* Desktop Skeleton */}
 
             <div className="hidden md:block">
               <Swiper
