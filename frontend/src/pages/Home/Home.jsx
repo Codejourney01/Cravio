@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { FreeMode, Navigation, Autoplay } from "swiper/modules";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -21,77 +21,49 @@ import dessert from "../../assets/icons/Categories/dessert.png";
 import juice from "../../assets/icons/Categories/juice.png";
 import momo from "../../assets/icons/Categories/momo.webp";
 
-import { getRestaurants } from "../../api/restuarantapi";
+import { useRestaurants } from "../../context/RestaurantContext";
 
 export default function Home() {
   // =================================================
-  // RESTAURANTS FROM API
+  // RESTAURANTS FROM CONTEXT
   // =================================================
 
-  const [restaurants, setRestaurants] = useState([]);
-  const [loadingRestaurants, setLoadingRestaurants] = useState(true);
-  const [restaurantError, setRestaurantError] = useState("");
+  const {
+    popularRestaurants,
+    loadingRestaurants,
+    restaurantError,
+  } = useRestaurants();
 
   // =================================================
-  // RANDOM LOADING MESSAGE
+  // RESTAURANT SWIPER BUTTON REFS
   // =================================================
 
-  const [loadingMessage, setLoadingMessage] = useState(
-    "Hungry? Cravio now! 🍔"
-  );
-
-  const loadingMessages = [
-    "Hungry? Cravio now! 🍔",
-    "Finding something delicious... 🍕",
-    "Your cravings are loading... 😋",
-    "Cravio is cooking up something good... 🔥",
-    "Searching for your next bite... 🍟",
-    "Good food is almost here... ❤️",
-    "Something tasty is on the way... 🚀",
-    "Preparing your food adventure... 🌮",
-    "Your next favourite restaurant is loading... ⭐",
-    "Just a little more, food lover... 🍴",
-  ];
+  const restaurantPrevRef = useRef(null);
+  const restaurantNextRef = useRef(null);
+  const restaurantSwiperRef = useRef(null);
 
   // =================================================
-  // FETCH RESTAURANTS
+  // CONNECT CUSTOM SWIPER BUTTONS
   // =================================================
 
   useEffect(() => {
-    const fetchRestaurants = async () => {
-      try {
-        const data = await getRestaurants();
+    if (
+      !restaurantSwiperRef.current ||
+      !restaurantPrevRef.current ||
+      !restaurantNextRef.current
+    ) {
+      return;
+    }
 
-        setRestaurants(data.restaurants);
-      } catch (error) {
-        console.error("Failed to fetch restaurants:", error);
+    const swiper = restaurantSwiperRef.current;
 
-        setRestaurantError("Failed to load restaurants");
-      } finally {
-        setLoadingRestaurants(false);
-      }
-    };
+    swiper.params.navigation.prevEl = restaurantPrevRef.current;
+    swiper.params.navigation.nextEl = restaurantNextRef.current;
 
-    fetchRestaurants();
-  }, []);
-
-  // =================================================
-  // CHANGE LOADING MESSAGE
-  // =================================================
-
-  useEffect(() => {
-    if (!loadingRestaurants) return;
-
-    const interval = setInterval(() => {
-      const randomIndex = Math.floor(
-        Math.random() * loadingMessages.length
-      );
-
-      setLoadingMessage(loadingMessages[randomIndex]);
-    }, 1500);
-
-    return () => clearInterval(interval);
-  }, [loadingRestaurants]);
+    swiper.navigation.destroy();
+    swiper.navigation.init();
+    swiper.navigation.update();
+  }, [popularRestaurants]);
 
   // =================================================
   // CATEGORIES
@@ -180,22 +152,21 @@ export default function Home() {
   };
 
   // =================================================
-  // FULL PAGE LOADING
+  // FULL PAGE SKELETON LOADING
   // =================================================
 
   if (loadingRestaurants) {
     return (
       <div className="w-full">
-
-        {/* =========================================
+        {/* =================================================
             BANNER SKELETON
-        ========================================= */}
+        ================================================= */}
 
         <BannerSkeleton />
 
-        {/* =========================================
+        {/* =================================================
             CATEGORIES SKELETON
-        ========================================= */}
+        ================================================= */}
 
         <section className="mt-9">
           <div className="px-3">
@@ -215,6 +186,7 @@ export default function Home() {
                   slidesPerView: 4,
                   spaceBetween: 16,
                 },
+
                 1024: {
                   slidesPerView: 5,
                   spaceBetween: 20,
@@ -231,9 +203,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* =========================================
+        {/* =================================================
             POPULAR RESTAURANTS SKELETON
-        ========================================= */}
+        ================================================= */}
 
         <section className="mt-9">
           <div className="px-3">
@@ -243,8 +215,8 @@ export default function Home() {
           </div>
 
           <div className="px-3 mt-5">
-
             {/* Mobile */}
+
             <div className="grid grid-cols-1 gap-4 md:hidden">
               {[1, 2, 3, 4].map((item) => (
                 <RestaurantSkeleton key={item} />
@@ -252,7 +224,8 @@ export default function Home() {
             </div>
 
             {/* Desktop */}
-            <div className="hidden md:block relative">
+
+            <div className="hidden md:block">
               <Swiper
                 slidesPerView={3}
                 spaceBetween={16}
@@ -271,13 +244,12 @@ export default function Home() {
                 ))}
               </Swiper>
             </div>
-
           </div>
         </section>
 
-        {/* =========================================
+        {/* =================================================
             PICKED JUST FOR YOU SKELETON
-        ========================================= */}
+        ================================================= */}
 
         <section>
           <div className="px-3 mt-9">
@@ -286,17 +258,6 @@ export default function Home() {
             <div className="w-[280px] h-4 bg-gray-200 rounded animate-pulse mt-2" />
           </div>
         </section>
-
-        {/* =========================================
-            LOADING MESSAGE
-        ========================================= */}
-
-        <div className="flex items-center justify-center py-10">
-          <p className="text-sm md:text-base font-medium text-subheading animate-pulse">
-            {loadingMessage}
-          </p>
-        </div>
-
       </div>
     );
   }
@@ -308,9 +269,7 @@ export default function Home() {
   if (restaurantError) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center px-4">
-        <p className="text-sm text-red-500">
-          {restaurantError}
-        </p>
+        <p className="text-sm text-red-500">{restaurantError}</p>
       </div>
     );
   }
@@ -321,7 +280,6 @@ export default function Home() {
 
   return (
     <div className="w-full">
-
       {/* =================================================
           BANNER
       ================================================= */}
@@ -337,6 +295,7 @@ export default function Home() {
           slidesPerView={1}
           className="w-[98%]"
         >
+          {/* Banner 1 */}
 
           <SwiperSlide>
             <img
@@ -348,6 +307,8 @@ export default function Home() {
             />
           </SwiperSlide>
 
+          {/* Banner 2 */}
+
           <SwiperSlide>
             <img
               src={banner2}
@@ -358,6 +319,8 @@ export default function Home() {
             />
           </SwiperSlide>
 
+          {/* Banner 3 */}
+
           <SwiperSlide>
             <img
               src={banner3}
@@ -367,7 +330,6 @@ export default function Home() {
               alt="Banner 3"
             />
           </SwiperSlide>
-
         </Swiper>
       </div>
 
@@ -376,7 +338,6 @@ export default function Home() {
       ================================================= */}
 
       <section className="mt-9">
-
         <div className="px-3">
           <Heading
             headingname="Categories"
@@ -395,6 +356,7 @@ export default function Home() {
                 slidesPerView: 4,
                 spaceBetween: 16,
               },
+
               1024: {
                 slidesPerView: 5,
                 spaceBetween: 20,
@@ -402,22 +364,17 @@ export default function Home() {
             }}
             className="w-full"
           >
-
             {categories.map((category, index) => (
               <SwiperSlide key={index}>
                 <CategoryCard
                   categoryname={category.categoryname}
                   categoryimg={category.categoryimg}
-                  categoryrestuarants={
-                    category.categoryrestuarants
-                  }
+                  categoryrestuarants={category.categoryrestuarants}
                 />
               </SwiperSlide>
             ))}
-
           </Swiper>
         </div>
-
       </section>
 
       {/* =================================================
@@ -425,7 +382,6 @@ export default function Home() {
       ================================================= */}
 
       <section className="mt-9">
-
         <div className="px-3">
           <Heading
             headingname="Popular Restaurants"
@@ -434,12 +390,12 @@ export default function Home() {
         </div>
 
         <div className="px-3 mt-5">
-
-          {/* MOBILE */}
+          {/* =================================================
+              MOBILE
+          ================================================= */}
 
           <div className="grid grid-cols-1 gap-4 md:hidden">
-
-            {restaurants.map((restaurant) => (
+            {popularRestaurants.map((restaurant) => (
               <RestaurantCard
                 key={restaurant._id}
                 Rname={restaurant.Rname}
@@ -450,18 +406,17 @@ export default function Home() {
                 priceForTwo={restaurant.priceForTwo}
               />
             ))}
-
           </div>
 
-          {/* DESKTOP */}
+          {/* =================================================
+              DESKTOP
+          ================================================= */}
 
           <div className="hidden md:block relative">
-
             <Swiper
               modules={[Navigation]}
-              navigation={{
-                nextEl: ".restaurant-next",
-                prevEl: ".restaurant-prev",
+              onSwiper={(swiper) => {
+                restaurantSwiperRef.current = swiper;
               }}
               slidesPerView={3}
               spaceBetween={16}
@@ -473,10 +428,8 @@ export default function Home() {
               }}
               className="w-full"
             >
-
-              {restaurants.map((restaurant) => (
+              {popularRestaurants.map((restaurant) => (
                 <SwiperSlide key={restaurant._id}>
-
                   <RestaurantCard
                     Rname={restaurant.Rname}
                     Rimage={restaurant.Rimage}
@@ -485,68 +438,37 @@ export default function Home() {
                     deliveryTime={restaurant.deliveryTime}
                     priceForTwo={restaurant.priceForTwo}
                   />
-
                 </SwiperSlide>
               ))}
-
             </Swiper>
 
-            {/* Previous Button */}
+            {/* =================================================
+                PREVIOUS BUTTON
+            ================================================= */}
 
             <button
-              className="
-                restaurant-prev
-                absolute
-                left-0
-                top-1/2
-                -translate-y-1/2
-                z-10
-                w-9
-                h-9
-                bg-white
-                shadow-md
-                rounded-full
-                flex
-                items-center
-                justify-center
-                text-gray-600
-                hover:text-[#FF5A1F]
-                transition
-              "
+              ref={restaurantPrevRef}
+              type="button"
+              aria-label="Previous restaurants"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white shadow-md rounded-full flex items-center justify-center text-gray-600 hover:text-[#FF5A1F] transition"
             >
               <FiChevronLeft size={20} />
             </button>
 
-            {/* Next Button */}
+            {/* =================================================
+                NEXT BUTTON
+            ================================================= */}
 
             <button
-              className="
-                restaurant-next
-                absolute
-                right-0
-                top-1/2
-                -translate-y-1/2
-                z-10
-                w-9
-                h-9
-                bg-white
-                shadow-md
-                rounded-full
-                flex
-                items-center
-                justify-center
-                text-gray-600
-                hover:text-[#FF5A1F]
-                transition
-              "
+              ref={restaurantNextRef}
+              type="button"
+              aria-label="Next restaurants"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-9 h-9 bg-white shadow-md rounded-full flex items-center justify-center text-gray-600 hover:text-[#FF5A1F] transition"
             >
               <FiChevronRight size={20} />
             </button>
-
           </div>
-
         </div>
-
       </section>
 
       {/* =================================================
@@ -554,16 +476,13 @@ export default function Home() {
       ================================================= */}
 
       <section>
-
         <div className="px-3 mt-7">
           <Heading
             headingname="Picked Just For You"
             subheading="Personalized recommendations from Cravio."
           />
         </div>
-
       </section>
-
     </div>
   );
 }
