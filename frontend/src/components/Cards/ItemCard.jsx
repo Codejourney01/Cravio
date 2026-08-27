@@ -1,6 +1,122 @@
 import React from "react";
 import { FiHeart, FiClock } from "react-icons/fi";
 
+// ============================================================
+// ITEM CARD SKELETON
+// ============================================================
+
+export function ItemCardSkeleton() {
+  return (
+    <div className="w-full min-h-[125px] px-3.5 py-3 bg-white rounded-xl shadow-sm flex items-center justify-between gap-3 animate-pulse">
+      {/* ========================================================
+          IMAGE SKELETON
+      ======================================================== */}
+
+      <div className="relative shrink-0 pb-3 order-2 md:order-1">
+        <div
+          className="
+            h-[90px]
+            w-[90px]
+            md:h-[96px]
+            md:w-[96px]
+            rounded-lg
+            bg-gray-200
+          "
+        />
+
+        {/* Favorite skeleton */}
+        <div
+          className="
+            absolute
+            top-1.5
+            right-1.5
+            h-6
+            w-6
+            rounded-full
+            bg-gray-300
+          "
+        />
+
+        {/* Add button skeleton - mobile */}
+        <div
+          className="
+            absolute
+            bottom-0
+            left-1/2
+            -translate-x-1/2
+            md:hidden
+            h-[27px]
+            min-w-[56px]
+            rounded-md
+            bg-gray-300
+          "
+        />
+      </div>
+
+      {/* ========================================================
+          ITEM DETAILS SKELETON
+      ======================================================== */}
+
+      <div
+        className="
+          flex
+          flex-1
+          min-w-0
+          flex-col
+          justify-center
+          gap-2
+          order-1
+          md:order-2
+        "
+      >
+        {/* Name */}
+        <div className="flex items-center gap-2">
+          <div className="h-[14px] w-[55%] rounded bg-gray-200" />
+          <div className="h-[13px] w-[13px] rounded-[2px] bg-gray-300" />
+        </div>
+
+        {/* Description */}
+        <div className="space-y-1">
+          <div className="h-[10px] w-[90%] rounded bg-gray-200" />
+          <div className="h-[10px] w-[65%] rounded bg-gray-200" />
+        </div>
+
+        {/* Preparation time */}
+        <div className="mt-1 flex items-center gap-1">
+          <div className="h-[11px] w-[11px] rounded-full bg-gray-300" />
+          <div className="h-[10px] w-[65px] rounded bg-gray-200" />
+        </div>
+
+        {/* Mobile price */}
+        <div className="mt-2 flex items-center gap-2 md:hidden">
+          <div className="h-[13px] w-[45px] rounded bg-gray-200" />
+          <div className="h-[10px] w-[40px] rounded bg-gray-200" />
+          <div className="h-[10px] w-[45px] rounded bg-gray-200" />
+        </div>
+      </div>
+
+      {/* ========================================================
+          DESKTOP RIGHT SECTION SKELETON
+      ======================================================== */}
+
+      <div className="hidden md:flex shrink-0 items-center gap-4 pr-1">
+        {/* Price */}
+        <div className="flex items-center gap-2">
+          <div className="h-[14px] w-[45px] rounded bg-gray-200" />
+          <div className="h-[10px] w-[40px] rounded bg-gray-200" />
+        </div>
+
+        {/* Add button */}
+        <div className="h-[27px] min-w-[56px] rounded-md bg-gray-300" />
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
+// ITEM CARD
+// ============================================================
+
 export default function ItemCard({ item }) {
   const discountedPrice =
     item.discount > 0
@@ -9,13 +125,16 @@ export default function ItemCard({ item }) {
 
   return (
     <div className="w-full min-h-[125px] px-3.5 py-3 bg-white rounded-xl shadow-sm flex items-center justify-between gap-3">
+      {/* ========================================================
+          MOBILE / DESKTOP CONTENT
+      ======================================================== */}
 
-      {/* ================= MOBILE / DESKTOP CONTENT ================= */}
       <div className="flex flex-1 min-w-0 items-center gap-3 md:flex-row">
+        {/* ======================================================
+            IMAGE
+        ====================================================== */}
 
-        {/* ================= IMAGE ================= */}
         <div className="relative shrink-0 pb-3 order-2 md:order-1">
-
           <img
             src={item.image}
             alt={item.name}
@@ -93,15 +212,15 @@ export default function ItemCard({ item }) {
           >
             ADD
           </button>
-
         </div>
 
-        {/* ================= ITEM DETAILS ================= */}
-        <div className="flex flex-1 flex-col min-w-0 justify-center order-1 md:order-2">
+        {/* ======================================================
+            ITEM DETAILS
+        ====================================================== */}
 
+        <div className="flex flex-1 flex-col min-w-0 justify-center order-1 md:order-2">
           {/* Item Name + Veg */}
           <div className="flex items-center gap-2">
-
             <h1 className="text-[14px] md:text-[15px] font-semibold text-heading truncate">
               {item.name}
             </h1>
@@ -122,7 +241,6 @@ export default function ItemCard({ item }) {
                 }`}
               />
             </span>
-
           </div>
 
           {/* Description */}
@@ -130,15 +248,16 @@ export default function ItemCard({ item }) {
             {item.description || "No description available."}
           </p>
 
-          {/* ================= PREPARATION TIME ================= */}
+          {/* Preparation Time */}
           <div className="mt-2 flex items-center gap-1 text-[10px] text-subheading">
             <FiClock size={11} />
-            <span>{item.preparationTime} mins</span>
+            <span>
+              {item.preparationTime} mins
+            </span>
           </div>
 
           {/* PRICE - MOBILE ONLY */}
           <div className="mt-3 md:hidden flex items-center gap-2">
-
             <span className="text-[13px] font-semibold text-heading">
               ₹{discountedPrice}
             </span>
@@ -154,18 +273,17 @@ export default function ItemCard({ item }) {
                 </span>
               </>
             )}
-
           </div>
-
         </div>
       </div>
 
-      {/* ================= DESKTOP RIGHT SECTION ================= */}
-      <div className="hidden md:flex shrink-0 items-center gap-4 pr-1">
+      {/* ========================================================
+          DESKTOP RIGHT SECTION
+      ======================================================== */}
 
+      <div className="hidden md:flex shrink-0 items-center gap-4 pr-1">
         {/* Price */}
         <div className="flex items-center gap-2">
-
           <span className="text-[14px] font-semibold text-heading">
             ₹{discountedPrice}
           </span>
@@ -175,7 +293,6 @@ export default function ItemCard({ item }) {
               ₹{item.price}
             </span>
           )}
-
         </div>
 
         {/* ADD Button */}
@@ -206,9 +323,7 @@ export default function ItemCard({ item }) {
         >
           ADD
         </button>
-
       </div>
-
     </div>
   );
 }
