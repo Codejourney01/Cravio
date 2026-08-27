@@ -1,10 +1,6 @@
  const Item = require("../models/fooditem");
 const cloudinary = require("../config/cloudinary");
 
-// ============================================================
-// UPLOAD BUFFER TO CLOUDINARY
-// ============================================================
-
 const uploadToCloudinary = (buffer, folder) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -24,26 +20,16 @@ const uploadToCloudinary = (buffer, folder) => {
   });
 };
 
-// ============================================================
-// CREATE ITEM
-// ============================================================
 
 const createItem = async (req, res) => {
   try {
-    // --------------------------------------------------------
-    // CHECK IMAGE
-    // --------------------------------------------------------
-
+  
     if (!req.files?.image) {
       return res.status(400).json({
         success: false,
         message: "Item image is required",
       });
     }
-
-    // --------------------------------------------------------
-    // REQUIRED FIELDS
-    // --------------------------------------------------------
 
     const {
       restaurantId,
@@ -71,19 +57,13 @@ const createItem = async (req, res) => {
       });
     }
 
-    // --------------------------------------------------------
-    // UPLOAD ITEM IMAGE
-    // --------------------------------------------------------
-
+  
     const imageResult = await uploadToCloudinary(
       req.files.image[0].buffer,
       "cravio/items"
     );
 
-    // --------------------------------------------------------
-    // CREATE ITEM
-    // --------------------------------------------------------
-
+  
     const item = await Item.create({
       restaurantId,
       name,
@@ -112,10 +92,6 @@ const createItem = async (req, res) => {
   }
 };
 
-// ============================================================
-// GET ALL ITEMS
-// ============================================================
-
 const getItems = async (req, res) => {
   try {
     const items = await Item.find()
@@ -136,10 +112,6 @@ const getItems = async (req, res) => {
     });
   }
 };
-
-// ============================================================
-// GET SINGLE ITEM
-// ============================================================
 
 const getItemById = async (req, res) => {
   try {
@@ -170,10 +142,6 @@ const getItemById = async (req, res) => {
     });
   }
 };
-
-// ============================================================
-// GET ITEMS BY RESTAURANT
-// ============================================================
 
 const getItemsByRestaurant = async (req, res) => {
   try {

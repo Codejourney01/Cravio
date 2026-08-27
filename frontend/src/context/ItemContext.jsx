@@ -10,7 +10,7 @@ import {
   getItemsByRestaurant,
 } from "../api/itemapi";
 
-const ItemContext = createContext();
+const ItemContext = createContext(null);
 
 export function ItemProvider({ children }) {
   // ============================================================
@@ -18,9 +18,7 @@ export function ItemProvider({ children }) {
   // ============================================================
 
   const [items, setItems] = useState([]);
-
   const [loadingItems, setLoadingItems] = useState(true);
-
   const [itemError, setItemError] = useState("");
 
   // ============================================================
@@ -28,27 +26,34 @@ export function ItemProvider({ children }) {
   // ============================================================
 
   const [restaurantItems, setRestaurantItems] = useState([]);
-
   const [loadingRestaurantItems, setLoadingRestaurantItems] =
     useState(false);
-
   const [restaurantItemsError, setRestaurantItemsError] =
     useState("");
 
   // ============================================================
-  // FETCH ALL ITEMS
+  // GET ALL ITEMS
   // ============================================================
 
   useEffect(() => {
     const fetchItems = async () => {
       try {
+        setLoadingItems(true);
+        setItemError("");
+
         const data = await getItems();
 
-        setItems(data.items || []);
+        console.log("ALL ITEMS API:", data);
+
+        const itemsData = Array.isArray(data)
+          ? data
+          : data.items || [];
+
+        setItems(itemsData);
       } catch (error) {
         console.error("Failed to fetch items:", error);
-
         setItemError("Failed to load items");
+        setItems([]);
       } finally {
         setLoadingItems(false);
       }
@@ -66,9 +71,35 @@ export function ItemProvider({ children }) {
       setLoadingRestaurantItems(true);
       setRestaurantItemsError("");
 
+      console.log(
+        "Fetching items for restaurant:",
+        restaurantId
+      );
+
       const data = await getItemsByRestaurant(restaurantId);
 
-      const restaurantItemsData = data.items || [];
+      console.log("RESTAURANT ITEMS API:", data);
+
+      /*
+        Supports both:
+
+        {
+          items: [...]
+        }
+
+        and
+
+        [...]
+      */
+
+      const restaurantItemsData = Array.isArray(data)
+        ? data
+        : data.items || [];
+
+      console.log(
+        "RESTAURANT ITEMS ARRAY:",
+        restaurantItemsData
+      );
 
       setRestaurantItems(restaurantItemsData);
 
@@ -98,8 +129,8 @@ export function ItemProvider({ children }) {
   const getItemById = (id) => {
     return items.find(
       (item) =>
-        item._id === id ||
-        item.id === id
+        String(item._id) === String(id) ||
+        String(item.id) === String(id)
     );
   };
 
@@ -110,7 +141,9 @@ export function ItemProvider({ children }) {
   const popularItems = [...items]
     .filter((item) => item.orderCount > 0)
     .sort(
-      (a, b) => b.orderCount - a.orderCount
+      (a, b) =>
+        (b.orderCount || 0) -
+        (a.orderCount || 0)
     );
 
   // ============================================================
@@ -131,10 +164,10 @@ export function ItemProvider({ children }) {
         // All items
         items,
 
-        // Popular
+        // Popular items
         popularItems,
 
-        // Available
+        // Available items
         availableItems,
 
         // Single item
@@ -161,5 +194,13 @@ export function ItemProvider({ children }) {
 // ============================================================
 
 export function useItems() {
-  return useContext(ItemContext);
+  const context = useContext(ItemContext);
+
+  if (!context) {
+    throw new Error(
+      "useItems must be used inside an ItemProvider"
+    );
+  }
+
+  return context;
 }
