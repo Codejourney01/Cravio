@@ -7,7 +7,7 @@ const {
   getItemsByRestaurant,
   updateItem,
   deleteItem,
-} = require("../controllers/itemController");
+} = require("../controllers/ItemController.js");
 
 const upload = require("../middleware/upload");
 
