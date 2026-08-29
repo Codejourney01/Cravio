@@ -93,7 +93,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
             className="flex items-center gap-1"
           >
             <img
-              src="/Images/logo.jpeg"
+              src="/Images/logo.png"
               alt="Cravio"
               className="w-12"
             />

@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import {
   FiMapPin,
   FiChevronDown,
@@ -9,45 +10,64 @@ import {
   FiMoon,
   FiSun,
 } from "react-icons/fi";
-
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 
-export default function Nav({
+export default function Navbar({
   setIsSidebarOpen,
   showSearch = true,
-})  {
+}) {
   const { isDark, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const isLoggedIn = false;
+
+  const user = {
+    name: "John Doe",
+    image: "https://i.pravatar.cc/150?img=12",
+  };
+
+  const handleLogout = () => {
+    setIsProfileOpen(false);
+    navigate("/");
+  };
+
+  const handleAccount = () => {
+    setIsProfileOpen(false);
+    navigate("/account");
+  };
+
+  const handleOrders = () => {
+    setIsProfileOpen(false);
+    navigate("/orders");
+  };
+
+  const handleSignIn = () => {
+    navigate("/login");
+  };
+
+  const handleCreateAccount = () => {
+    navigate("/register");
+  };
 
   return (
     <header className="w-full">
-      {/* ================= MOBILE TOP ROW ================= */}
       <div className="flex h-[50px] items-center justify-between px-4 min-[721px]:hidden">
-        {/* Hamburger */}
         <button
           type="button"
           onClick={() => setIsSidebarOpen(true)}
-          className="
-            mt-4
-            flex
-            h-10
-            w-10
-            items-center
-            justify-center
-            rounded-lg
-            bg-white
-            shadow-sm
-          "
+          aria-label="Open menu"
+          className="mt-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm transition-all duration-200 hover:shadow-md"
         >
           <FiMenu
-            size={22}
+            size={21}
             strokeWidth={1.8}
             className="text-heading"
           />
         </button>
 
-        {/* ================= MOBILE RIGHT ACTIONS ================= */}
-        <div className="mt-4 flex items-center gap-2">
-          {/* Dark / Light Mode */}
+        <div className="mt-4 flex items-center gap-3">
           <button
             type="button"
             onClick={toggleTheme}
@@ -55,20 +75,7 @@ export default function Nav({
               isDark ? "Switch to light mode" : "Switch to dark mode"
             }
             title={isDark ? "Light mode" : "Dark mode"}
-            className="
-              flex
-              h-8
-              w-8
-              items-center
-              justify-center
-              rounded-full
-              bg-white
-              text-heading
-              shadow-[0_3px_12px_rgba(0,0,0,0.07)]
-              transition-all
-              duration-200
-              hover:text-[#FF5A1F]
-            "
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_3px_12px_rgba(0,0,0,0.07)] transition-all duration-200 hover:shadow-md"
           >
             {isDark ? (
               <FiSun
@@ -85,24 +92,69 @@ export default function Nav({
             )}
           </button>
 
-          {/* User Image - Mobile */}
-          <div className="h-8 w-8 overflow-hidden rounded-full">
-            <img
-              src="https://i.pravatar.cc/150?img=12"
-              alt="John Doe"
-              className="h-full w-full object-cover"
-            />
-          </div>
+          {isLoggedIn ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                aria-label="Open profile menu"
+                className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100"
+              >
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="h-full w-full object-cover"
+                />
+              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 top-11 z-50 w-40 overflow-hidden rounded-xl border border-gray-100 bg-white p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+                  <button
+                    type="button"
+                    onClick={handleAccount}
+                    className="block w-full rounded-lg px-3 py-2.5 text-left text-xs font-medium text-heading transition hover:bg-gray-50"
+                  >
+                    My Account
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleOrders}
+                    className="block w-full rounded-lg px-3 py-2.5 text-left text-xs font-medium text-heading transition hover:bg-gray-50"
+                  >
+                    My Orders
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block w-full rounded-lg px-3 py-2.5 text-left text-xs font-medium text-red-500 transition hover:bg-red-50"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSignIn}
+              className="rounded-lg bg-cravio px-4 py-2 text-[11px] font-semibold text-white shadow-[0_4px_12px_rgba(255,90,31,0.20)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_6px_16px_rgba(255,90,31,0.25)] active:translate-y-0"
+            >
+              Sign in
+            </button>
+          )}
         </div>
       </div>
 
-      {/* ================= NAVBAR ================= */}
       <div className="flex w-full items-center justify-between px-4 py-3 md:px-10">
-        {/* ================= ADDRESS ================= */}
         <div className="hidden min-[721px]:flex items-center">
-          <div className="flex cursor-pointer items-center gap-2 text-sm text-subheading">
+          <button
+            type="button"
+            className="flex items-center gap-2 text-sm text-subheading transition-colors duration-200 hover:text-heading"
+          >
             <FiMapPin
-              className="text-lg text-[#FF5A1F]"
+              className="text-lg text-cravio"
               strokeWidth={1.8}
             />
 
@@ -110,142 +162,126 @@ export default function Nav({
 
             <FiChevronDown
               className="text-subheading"
+              size={15}
               strokeWidth={1.8}
             />
-          </div>
+          </button>
         </div>
 
-        {/* ================= SEARCH BAR ================= */}
         {showSearch && (
-  <div className="flex w-full items-center justify-center min-[721px]:flex-1 min-[721px]:px-10">
-    <div
-      className="
-        flex
-        h-[40px]
-        w-[95%]
-        items-center
-        justify-center
-        rounded-md
-        bg-white
-        px-4
-        mt-4
-        md:mt-0
-        shadow-[0_2px_12px_rgba(0,0,0,0.08)]
-        min-[721px]:w-full
-        min-[721px]:max-w-[500px]
-      "
-    >
-      <FiSearch
-        className="shrink-0 text-subheading"
-        size={14}
-        strokeWidth={1.8}
-      />
+          <div className="flex w-full items-center justify-center min-[721px]:flex-1 min-[721px]:px-10">
+            <div className="mt-4 flex h-[40px] w-[95%] items-center rounded-md bg-white px-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)] min-[721px]:mt-0 min-[721px]:w-full min-[721px]:max-w-[500px]">
+              <FiSearch
+                className="shrink-0 text-subheading"
+                size={14}
+                strokeWidth={1.8}
+              />
 
-      <input
-        type="text"
-        placeholder="What are you craving for...?"
-        className="
-          ml-2
-          w-full
-          bg-transparent
-          text-[12px]
-          text-heading
-          outline-none
-          placeholder:text-subheading
-        "
-      />
-    </div>
-  </div>
-)}
+              <input
+                type="text"
+                placeholder="What are you craving for...?"
+                className="ml-2 w-full bg-transparent text-[12px] text-heading outline-none placeholder:text-subheading"
+              />
+            </div>
+          </div>
+        )}
 
-        {/* ================= DESKTOP ACTIONS ================= */}
         <div className="hidden min-[721px]:flex items-center gap-3">
-          {/* ================= CART ================= */}
-          <div
-            className="
-              flex
-              h-7
-              w-7
-              cursor-pointer
-              items-center
-              justify-center
-              rounded-full
-              bg-white
-              text-heading
-              shadow-[0_3px_12px_rgba(0,0,0,0.07)]
-              transition-all
-              duration-200
-              hover:text-[#FF5A1F]
-              hover:shadow-[0_4px_14px_rgba(0,0,0,0.10)]
-            "
+          <button
+            type="button"
+            onClick={() => navigate("/cart")}
+            aria-label="Shopping cart"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_3px_12px_rgba(0,0,0,0.07)] transition-all duration-200 hover:text-cravio hover:shadow-[0_4px_14px_rgba(0,0,0,0.10)]"
           >
             <FiShoppingCart
               size={14}
               className="text-cravio"
               strokeWidth={1.8}
             />
-          </div>
+          </button>
 
-          {/* ================= FAVOURITE ================= */}
-          <div
-            className="
-              flex
-              h-7
-              w-7
-              cursor-pointer
-              items-center
-              justify-center
-              rounded-full
-              bg-white
-              text-heading
-              shadow-[0_3px_12px_rgba(0,0,0,0.07)]
-              transition-all
-              duration-200
-              hover:text-[#FF5A1F]
-              hover:shadow-[0_4px_14px_rgba(0,0,0,0.10)]
-            "
+          <button
+            type="button"
+            onClick={() => navigate("/favorites")}
+            aria-label="Favorites"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_3px_12px_rgba(0,0,0,0.07)] transition-all duration-200 hover:text-cravio hover:shadow-[0_4px_14px_rgba(0,0,0,0.10)]"
           >
             <FiHeart
               size={14}
               strokeWidth={1.8}
               className="text-cravio"
             />
-          </div>
+          </button>
 
-          {/* ================= USER PROFILE ================= */}
-          <div
-            className="
-              ml-1
-              flex
-              cursor-pointer
-              items-center
-              gap-2
-            "
-          >
-            {/* Profile Image */}
-            <div className="h-7 w-7 overflow-hidden rounded-full">
-              <img
-                src="https://i.pravatar.cc/150?img=12"
-                alt="John Doe"
-                className="h-full w-full object-cover"
-              />
+          {isLoggedIn ? (
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="ml-1 flex cursor-pointer items-center gap-2"
+              >
+                <div className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100">
+                  <img
+                    src={user.image}
+                    alt={user.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                <div className="flex items-center gap-1">
+                  <span className="text-[12px] font-medium text-heading">
+                    {user.name}
+                  </span>
+
+                  <FiChevronDown
+                    size={14}
+                    strokeWidth={1.8}
+                    className="text-subheading"
+                  />
+                </div>
+              </button>
+
+              {isProfileOpen && (
+                <div className="absolute right-0 top-11 z-50 w-40 overflow-hidden rounded-xl border border-gray-100 bg-white p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+                  <button
+                    type="button"
+                    onClick={handleAccount}
+                    className="block w-full rounded-lg px-3 py-2.5 text-left text-xs font-medium text-heading transition hover:bg-gray-50"
+                  >
+                    My Account
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleOrders}
+                    className="block w-full rounded-lg px-3 py-2.5 text-left text-xs font-medium text-heading transition hover:bg-gray-50"
+                  >
+                    My Orders
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="block w-full rounded-lg px-3 py-2.5 text-left text-xs font-medium text-red-500 transition hover:bg-red-50"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
+          ) : (
+            <div className="ml-2 flex items-center gap-2">
 
-            {/* Name + Chevron */}
-            <div className="flex items-center gap-1">
-              <span className="text-[12px] font-medium text-heading">
-                John Doe
-              </span>
-
-              <FiChevronDown
-                size={15}
-                strokeWidth={1.8}
-                className="text-subheading"
-              />
+              <button
+                type="button"
+                onClick={handleCreateAccount}
+                className="rounded-lg bg-cravio px-4 py-2 text-[12px] font-semibold text-white shadow-[0_4px_12px_rgba(255,90,31,0.18)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_6px_16px_rgba(255,90,31,0.25)] active:translate-y-0"
+              >
+                Create account
+              </button>
             </div>
-          </div>
+          )}
 
-          {/* ================= DARK MODE TOGGLE ================= */}
           <button
             type="button"
             onClick={toggleTheme}
@@ -253,23 +289,7 @@ export default function Nav({
               isDark ? "Switch to light mode" : "Switch to dark mode"
             }
             title={isDark ? "Light mode" : "Dark mode"}
-            className="
-              ml-1
-              flex
-              h-8
-              w-8
-              cursor-pointer
-              items-center
-              justify-center
-              rounded-full
-              bg-white
-              text-heading
-              shadow-[0_3px_12px_rgba(0,0,0,0.07)]
-              transition-all
-              duration-200
-              hover:text-[#FF5A1F]
-              hover:shadow-[0_4px_14px_rgba(0,0,0,0.10)]
-            "
+            className="ml-1 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_3px_12px_rgba(0,0,0,0.07)] transition-all duration-200 hover:text-cravio hover:shadow-[0_4px_14px_rgba(0,0,0,0.10)]"
           >
             {isDark ? (
               <FiSun
