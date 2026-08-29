@@ -219,7 +219,7 @@ function Register() {
                 w-full
                 h-[44px]
                 mt-4
-                rounded-full
+                rounded-lg
                 bg-cravio
                 hover:bg-orange-600
                 hover:-translate-y-[1px]
