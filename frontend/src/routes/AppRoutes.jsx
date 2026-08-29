@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
-
+import OTP from "../pages/Register/Otp";
 import Home from "../pages/Home/Home";
 import Restaurants from "../pages/Restaurants/Restaurants";
 import RestaurantDetails from "../pages/RestaurantDetails/RestaurantDetails";
@@ -46,7 +46,7 @@ function AppRoutes() {
 
         {/* Authentication */}
         <Route path="/login" element={<Login />} />
-
+        <Route path="/otp" element={<OTP />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>

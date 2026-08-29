@@ -1,12 +1,15 @@
 
 import { useState } from "react";
 import { FiEye, FiEyeOff, FiMail } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="min-h-screen w-full bg-white text-[#17233b] flex flex-col">
+
       <header
         className="
           w-full
@@ -16,6 +19,7 @@ function Register() {
         "
       >
         <div className="flex items-center gap-2">
+
           <img
             src="/Images/logo.png"
             alt="Cravio"
@@ -23,12 +27,15 @@ function Register() {
               w-8 h-8
               md:w-9 md:h-9
               object-contain
-              transition-transform duration-200
+              transition-transform
+              duration-200
               hover:scale-105
             "
           />
 
-          <h1
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
             className="
               text-[17px]
               md:text-[18px]
@@ -38,11 +45,13 @@ function Register() {
             "
           >
             Cravio
-          </h1>
+          </button>
+
         </div>
 
         <button
           type="button"
+          onClick={() => navigate("/login")}
           className="
             text-[13px]
             md:text-[14px]
@@ -58,6 +67,7 @@ function Register() {
       </header>
 
       <main className="w-full flex-1 flex justify-center">
+
         <div
           className="
             w-full
@@ -70,7 +80,9 @@ function Register() {
             pb-12
           "
         >
+
           <div className="w-full flex flex-col items-center text-center mb-7">
+
             <h2
               className="
                 whitespace-nowrap
@@ -97,10 +109,19 @@ function Register() {
             >
               Create an account and discover delicious food near you.
             </p>
+
           </div>
 
-          <form className="w-full">
+          <form
+            className="w-full"
+            onSubmit={(e) => {
+              e.preventDefault();
+              navigate("/otp");
+            }}
+          >
+
             <div className="relative">
+
               <FiMail
                 size={16}
                 className="
@@ -116,6 +137,7 @@ function Register() {
               <input
                 type="email"
                 placeholder="Email address"
+                required
                 className="
                   w-full
                   h-[44px]
@@ -137,12 +159,15 @@ function Register() {
                   focus:ring-cravio
                 "
               />
+
             </div>
 
             <div className="relative mt-2.5">
+
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Create a password"
+                required
                 className="
                   w-full
                   h-[44px]
@@ -182,7 +207,9 @@ function Register() {
                   duration-200
                 "
                 aria-label={
-                  showPassword ? "Hide password" : "Show password"
+                  showPassword
+                    ? "Hide password"
+                    : "Show password"
                 }
               >
                 {showPassword ? (
@@ -191,6 +218,7 @@ function Register() {
                   <FiEye size={17} />
                 )}
               </button>
+
             </div>
 
             <div
@@ -209,7 +237,9 @@ function Register() {
                 Get up to 10 forks
               </span>
 
-              <span className="text-subheading">after you sign up</span>
+              <span className="text-subheading">
+                after you sign up
+              </span>
             </div>
 
             <button
@@ -244,6 +274,7 @@ function Register() {
                 Continue
               </span>
             </button>
+
           </form>
 
           <div
@@ -285,7 +316,9 @@ function Register() {
               text-[#17233b]
             "
           >
+
             <span className="absolute left-5">
+
               <svg
                 width="17"
                 height="17"
@@ -311,12 +344,15 @@ function Register() {
                   d="M12 6.12c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.83 3.25 14.63 2.25 12 2.25a9.75 9.75 0 0 0-8.71 5.38l3.24 2.52C7.3 7.84 9.46 6.12 12 6.12Z"
                 />
               </svg>
+
             </span>
 
             Continue with Google
+
           </button>
 
           <div className="text-center mt-5">
+
             <p
               className="
                 text-[11px]
@@ -325,8 +361,10 @@ function Register() {
               "
             >
               Have an account?{" "}
+
               <button
                 type="button"
+                onClick={() => navigate("/login")}
                 className="
                   font-medium
                   text-cravio
@@ -338,8 +376,11 @@ function Register() {
               >
                 Login now
               </button>
+
             </p>
+
           </div>
+
         </div>
       </main>
 
@@ -354,7 +395,9 @@ function Register() {
           px-5
         "
       >
+
         <div className="flex items-center gap-1.5">
+
           <svg
             width="12"
             height="12"
@@ -372,7 +415,9 @@ function Register() {
               rx="2"
             />
 
-            <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            <path
+              d="M8 10V7a4 4 0 0 1 8 0v3"
+            />
           </svg>
 
           <span
@@ -383,6 +428,7 @@ function Register() {
             "
           >
             Your information is{" "}
+
             <span
               className="
                 underline
@@ -394,6 +440,7 @@ function Register() {
               safe and secure
             </span>
           </span>
+
         </div>
 
         <span className="text-subheading">
@@ -436,10 +483,11 @@ function Register() {
 
           Help
         </button>
+
       </footer>
+
     </div>
   );
 }
 
 export default Register;
-
