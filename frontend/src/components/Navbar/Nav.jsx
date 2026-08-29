@@ -44,7 +44,7 @@ export default function Navbar({
   };
 
   const handleSignIn = () => {
-    navigate("/login");
+    navigate("/register");
   };
 
   const handleCreateAccount = () => {
