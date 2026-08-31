@@ -391,6 +391,7 @@ const resendOTP = async (req, res) => {
 // LOGIN
 // ==========================================
 
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -430,18 +431,35 @@ const login = async (req, res) => {
       });
     }
 
+    // ==========================================
+    // CREATE LOGIN SESSION
+    // ==========================================
+
     req.session.userId = user._id.toString();
 
-    return res.status(200).json({
-      success: true,
-      message: "Login successful",
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-        profileImage: user.profileImage,
-        membership: user.membership,
-      },
+    // Explicitly save the session before responding
+    req.session.save((error) => {
+      if (error) {
+        console.error("Session save error:", error);
+
+        return res.status(500).json({
+          success: false,
+          message: "Could not create login session",
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Login successful",
+
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          profileImage: user.profileImage,
+          membership: user.membership,
+        },
+      });
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -452,6 +470,8 @@ const login = async (req, res) => {
     });
   }
 };
+
+
 
 // ==========================================
 // GET CURRENT USER

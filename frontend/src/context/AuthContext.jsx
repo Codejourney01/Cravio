@@ -120,22 +120,29 @@ export function AuthProvider({ children }) {
   // GET CURRENT USER
   // ================================
 
-  const getMe = async () => {
-    try {
-      const data = await getCurrentUser();
 
-      if (data.success) {
-        setUser(data.user);
-        setIsAuthenticated(true);
-      }
+const getMe = async () => {
+  try {
+    const data = await getCurrentUser();
 
-      return data;
-    } catch (error) {
+    if (data.success && data.user) {
+      setUser(data.user);
+      setIsAuthenticated(true);
+    } else {
       setUser(null);
       setIsAuthenticated(false);
-      throw error;
     }
-  };
+
+    return data;
+  } catch (error) {
+    setUser(null);
+    setIsAuthenticated(false);
+
+    throw error;
+  }
+};
+
+
 
   // ================================
   // CHECK AUTH ON APP LOAD
