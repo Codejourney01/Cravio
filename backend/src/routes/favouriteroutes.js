@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/restaurants", getFavoriteRestaurants);
 
-router.post("/restaurants", addFavoriteRestaurant);
+router.post("/restaurants/:restaurantId", addFavoriteRestaurant);
 
 router.delete("/restaurants/:restaurantId", removeFavoriteRestaurant);
 

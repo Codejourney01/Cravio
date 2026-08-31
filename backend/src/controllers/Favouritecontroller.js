@@ -12,8 +12,7 @@ const getFavoriteRestaurants = async (req, res) => {
       });
     }
 
-    const user = await User.findById(userId)
-      .populate("favoriteRestaurants");
+    const user = await User.findById(userId).populate("favoriteRestaurants");
 
     if (!user) {
       return res.status(404).json({
@@ -24,7 +23,7 @@ const getFavoriteRestaurants = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      favorites: user.favoriteRestaurants,
+      favorites: user.favoriteRestaurants || [],
     });
   } catch (error) {
     console.error("Get favorite restaurants error:", error);
@@ -39,7 +38,7 @@ const getFavoriteRestaurants = async (req, res) => {
 const addFavoriteRestaurant = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { restaurantId } = req.body;
+    const { restaurantId } = req.params;
 
     if (!userId) {
       return res.status(401).json({
@@ -64,7 +63,11 @@ const addFavoriteRestaurant = async (req, res) => {
       });
     }
 
-    if (user.favoriteRestaurants.includes(restaurantId)) {
+    const alreadyFavorite = user.favoriteRestaurants.some(
+      (id) => id.toString() === restaurantId
+    );
+
+    if (alreadyFavorite) {
       return res.status(400).json({
         success: false,
         message: "Restaurant is already in favorites",
@@ -99,6 +102,13 @@ const removeFavoriteRestaurant = async (req, res) => {
       return res.status(401).json({
         success: false,
         message: "Please login to remove favorites",
+      });
+    }
+
+    if (!restaurantId) {
+      return res.status(400).json({
+        success: false,
+        message: "Restaurant ID is required",
       });
     }
 
