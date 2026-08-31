@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import {
-  FiChevronLeft,
-  FiClock,
-  FiHeart,
-  FiSearch,
-} from "react-icons/fi";
-
+import { FiChevronLeft, FiClock, FiHeart, FiSearch } from "react-icons/fi";
 import { FaStar } from "react-icons/fa";
-
 import { Swiper, SwiperSlide } from "swiper/react";
-
 import "swiper/css";
 
 import { useRestaurants } from "../../context/RestaurantContext";
 import { useItems } from "../../context/ItemContext";
 
-import ItemCard, {
-  ItemCardSkeleton,
-} from "../../components/Cards/ItemCard";
+import ItemCard, { ItemCardSkeleton } from "../../components/Cards/ItemCard";
+
+// ============================================================
+// FAVORITE API
+// ============================================================
+
+import {
+  addFavoriteRestaurant,
+  ViewFavoriteRestuarant,
+  RemoveFavoriteRestuarant,
+} from "../../api/favoriteapi";
+
+// ============================================================
+// COMPONENT
+// ============================================================
 
 export default function RestaurantDetails() {
   const { id } = useParams();
@@ -29,11 +32,7 @@ export default function RestaurantDetails() {
   // RESTAURANT CONTEXT
   // ============================================================
 
-  const {
-    restaurants,
-    loadingRestaurants,
-    restaurantError,
-  } = useRestaurants();
+  const { restaurants, loadingRestaurants, restaurantError } = useRestaurants();
 
   // ============================================================
   // ITEM CONTEXT
@@ -51,7 +50,7 @@ export default function RestaurantDetails() {
   // ============================================================
 
   const restaurant = restaurants.find(
-    (item) => String(item._id) === String(id)
+    (item) => String(item._id) === String(id),
   );
 
   // ============================================================
@@ -59,12 +58,12 @@ export default function RestaurantDetails() {
   // ============================================================
 
   const [activeTab, setActiveTab] = useState("For You");
-
   const [searchQuery, setSearchQuery] = useState("");
-
   const [bannerLoading, setBannerLoading] = useState(true);
 
+  // Favorite state
   const [isFavourite, setIsFavourite] = useState(false);
+  const [favoriteLoading, setFavoriteLoading] = useState(false);
 
   // Randomized items
   const [displayItems, setDisplayItems] = useState([]);
@@ -73,13 +72,7 @@ export default function RestaurantDetails() {
   // TABS
   // ============================================================
 
-  const tabs = [
-    "For You",
-    "Popular",
-    "Best Sellers",
-    "Meal Combo",
-    "Offers",
-  ];
+  const tabs = ["For You", "Popular", "Best Sellers", "Meal Combo", "Offers"];
 
   // ============================================================
   // FETCH RESTAURANT ITEMS
@@ -100,6 +93,107 @@ export default function RestaurantDetails() {
   }, [id]);
 
   // ============================================================
+  // CHECK IF RESTAURANT IS ALREADY FAVORITE
+  // ============================================================
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!id) return;
+
+      try {
+        const data = await ViewFavoriteRestuarant();
+
+        /*
+          Expected backend response should contain favorite restaurants.
+
+          Example:
+
+          {
+            success: true,
+            favoriteRestaurants: [...]
+          }
+
+          We support a few possible response property names
+          so the frontend is not unnecessarily fragile.
+        */
+
+        const favoriteRestaurants =
+          data.favoriteRestaurants || data.restaurants || data.favorites || [];
+
+        const alreadyFavorite = favoriteRestaurants.some((favorite) => {
+          const favoriteId =
+            favorite?._id ||
+            favorite?.restaurant?._id ||
+            favorite?.restaurantId;
+
+          return String(favoriteId) === String(id);
+        });
+
+        setIsFavourite(alreadyFavorite);
+      } catch (error) {
+        /*
+          If the user is not logged in or the favorite request
+          fails, we simply keep the heart inactive.
+
+          We do not break the restaurant page.
+        */
+
+        console.error("Failed to check favorite restaurant:", error);
+
+        setIsFavourite(false);
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [id]);
+
+  // ============================================================
+  // TOGGLE FAVORITE
+  // ============================================================
+
+  const handleFavoriteToggle = async () => {
+    if (!id || favoriteLoading) return;
+
+    try {
+      setFavoriteLoading(true);
+
+      // ========================================================
+      // REMOVE FAVORITE
+      // ========================================================
+
+      if (isFavourite) {
+        await RemoveFavoriteRestuarant(id);
+
+        setIsFavourite(false);
+
+        return;
+      }
+
+      // ========================================================
+      // ADD FAVORITE
+      // ========================================================
+
+      await addFavoriteRestaurant(id);
+
+      setIsFavourite(true);
+    } catch (error) {
+      console.error("Favorite restaurant error:", error);
+
+      /*
+        We don't change isFavourite when the API fails.
+
+        Example:
+        If the restaurant is currently favorite and DELETE fails,
+        the heart stays favorite.
+      */
+
+      alert(error.message || "Something went wrong");
+    } finally {
+      setFavoriteLoading(false);
+    }
+  };
+
+  // ============================================================
   // RANDOMIZE ITEMS
   // ============================================================
 
@@ -109,9 +203,7 @@ export default function RestaurantDetails() {
       return;
     }
 
-    const shuffledItems = [...restaurantItems].sort(
-      () => Math.random() - 0.5
-    );
+    const shuffledItems = [...restaurantItems].sort(() => Math.random() - 0.5);
 
     setDisplayItems(shuffledItems);
   }, [restaurantItems]);
@@ -134,10 +226,7 @@ export default function RestaurantDetails() {
       // --------------------------------------------------------
 
       case "Popular":
-        return (
-          item.isAvailable !== false &&
-          Number(item.orderCount || 0) > 0
-        );
+        return item.isAvailable !== false && Number(item.orderCount || 0) > 0;
 
       // --------------------------------------------------------
       // BEST SELLERS
@@ -146,11 +235,9 @@ export default function RestaurantDetails() {
       case "Best Sellers":
         return (
           item.isAvailable !== false &&
-          (
-            item.isBestSeller === true ||
+          (item.isBestSeller === true ||
             item.bestSeller === true ||
-            Number(item.orderCount || 0) >= 20
-          )
+            Number(item.orderCount || 0) >= 20)
         );
 
       // --------------------------------------------------------
@@ -160,12 +247,10 @@ export default function RestaurantDetails() {
       case "Meal Combo":
         return (
           item.isAvailable !== false &&
-          (
-            item.category?.toLowerCase() === "combo" ||
+          (item.category?.toLowerCase() === "combo" ||
             item.category?.toLowerCase() === "meal combo" ||
             item.type?.toLowerCase() === "combo" ||
-            item.name?.toLowerCase().includes("combo")
-          )
+            item.name?.toLowerCase().includes("combo"))
         );
 
       // --------------------------------------------------------
@@ -173,10 +258,7 @@ export default function RestaurantDetails() {
       // --------------------------------------------------------
 
       case "Offers":
-        return (
-          item.isAvailable !== false &&
-          Number(item.discount || 0) > 0
-        );
+        return item.isAvailable !== false && Number(item.discount || 0) > 0;
 
       default:
         return true;
@@ -190,9 +272,7 @@ export default function RestaurantDetails() {
   const filteredItems = tabFilteredItems.filter((item) => {
     const name = item.name || "";
 
-    return name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
+    return name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   // ============================================================
@@ -234,6 +314,7 @@ export default function RestaurantDetails() {
         <div className="mt-5 px-3 md:px-7 md:pr-9">
           <div className="flex items-center justify-between">
             {/* Restaurant name */}
+
             <div
               className="
                 h-6
@@ -247,13 +328,14 @@ export default function RestaurantDetails() {
             />
 
             {/* Favourite */}
+
             <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200" />
           </div>
 
           {/* Rating / delivery */}
+
           <div className="mt-3 flex gap-4">
             <div className="h-3 w-[110px] animate-pulse rounded bg-gray-200" />
-
             <div className="h-3 w-[90px] animate-pulse rounded bg-gray-200" />
           </div>
         </div>
@@ -279,15 +361,9 @@ export default function RestaurantDetails() {
         ====================================================== */}
 
         <div className="mt-6 px-3 md:hidden">
-          <Swiper
-            slidesPerView="auto"
-            spaceBetween={28}
-          >
+          <Swiper slidesPerView="auto" spaceBetween={28}>
             {[1, 2, 3, 4, 5].map((item) => (
-              <SwiperSlide
-                key={item}
-                className="!w-auto"
-              >
+              <SwiperSlide key={item} className="!w-auto">
                 <div className="h-4 w-[65px] animate-pulse rounded bg-gray-200" />
               </SwiperSlide>
             ))}
@@ -350,9 +426,7 @@ export default function RestaurantDetails() {
             Something went wrong
           </h3>
 
-          <p className="mt-1 text-xs text-red-500">
-            {restaurantError}
-          </p>
+          <p className="mt-1 text-xs text-red-500">{restaurantError}</p>
         </div>
       </div>
     );
@@ -421,10 +495,7 @@ export default function RestaurantDetails() {
             hover:text-[#FF5A1F]
           "
         >
-          <FiChevronLeft
-            size={17}
-            strokeWidth={1.8}
-          />
+          <FiChevronLeft size={17} strokeWidth={1.8} />
         </button>
       </div>
 
@@ -444,6 +515,7 @@ export default function RestaurantDetails() {
           "
         >
           {/* Banner Skeleton */}
+
           {bannerLoading && (
             <div
               className="
@@ -471,11 +543,7 @@ export default function RestaurantDetails() {
               object-cover
               transition-opacity
               duration-300
-              ${
-                bannerLoading
-                  ? "opacity-0"
-                  : "opacity-100"
-              }
+              ${bannerLoading ? "opacity-0" : "opacity-100"}
             `}
           />
         </div>
@@ -487,16 +555,23 @@ export default function RestaurantDetails() {
 
       <div className="mt-5 px-3 md:px-7 md:pr-9">
         <div className="flex items-center justify-between">
+          {/* Restaurant Name */}
+
           <h1 className="text-lg font-semibold text-heading md:text-2xl">
             {restaurant.Rname}
           </h1>
 
+          {/* ====================================================
+              FAVORITE BUTTON
+          ==================================================== */}
+
           <button
             type="button"
-            aria-label="Add to favourites"
-            onClick={() =>
-              setIsFavourite(!isFavourite)
+            aria-label={
+              isFavourite ? "Remove from favourites" : "Add to favourites"
             }
+            disabled={favoriteLoading}
+            onClick={handleFavoriteToggle}
             className={`
               flex
               h-7
@@ -512,49 +587,39 @@ export default function RestaurantDetails() {
                   ? "bg-[#FF5A1F] text-white"
                   : "bg-[#FF5A1F]/[57%] text-white hover:bg-[#FF5A1F]"
               }
+              ${favoriteLoading ? "cursor-not-allowed opacity-60" : ""}
             `}
           >
             <FiHeart
               size={12}
               strokeWidth={1.8}
-              className={
-                isFavourite
-                  ? "fill-white"
-                  : ""
-              }
+              className={isFavourite ? "fill-white" : ""}
             />
           </button>
         </div>
 
-        {/* Rating + Delivery Time */}
+        {/* ======================================================
+            RATING + DELIVERY TIME
+        ====================================================== */}
 
         <div className="mt-2 flex items-center gap-4">
           {/* Rating */}
 
           <div className="flex items-center gap-1">
-            <FaStar
-              className="text-yellow-400"
-              size={11}
-            />
+            <FaStar className="text-yellow-400" size={11} />
 
             <span className="text-[12px] text-subheading">
-              {restaurant.rating || "0"} (
-              {restaurant.reviews || "0"} Reviews)
+              {restaurant.rating || "0"} ({restaurant.reviews || "0"} Reviews)
             </span>
           </div>
 
           {/* Delivery Time */}
 
           <div className="flex items-center gap-1">
-            <FiClock
-              className="text-subheading"
-              size={12}
-              strokeWidth={1.8}
-            />
+            <FiClock className="text-subheading" size={12} strokeWidth={1.8} />
 
             <span className="text-[12px] text-subheading">
-              {restaurant.deliveryTime ||
-                "25 - 30 min"}
+              {restaurant.deliveryTime || "25 - 30 min"}
             </span>
           </div>
         </div>
@@ -586,9 +651,7 @@ export default function RestaurantDetails() {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e) =>
-              setSearchQuery(e.target.value)
-            }
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search dishes..."
             className="
               ml-2
@@ -608,32 +671,19 @@ export default function RestaurantDetails() {
       ======================================================== */}
 
       <div className="mt-6 px-3 md:hidden">
-        <Swiper
-          slidesPerView="auto"
-          spaceBetween={28}
-          className="w-full"
-        >
+        <Swiper slidesPerView="auto" spaceBetween={28} className="w-full">
           {tabs.map((tab) => (
-            <SwiperSlide
-              key={tab}
-              className="!w-auto"
-            >
+            <SwiperSlide key={tab} className="!w-auto">
               <button
                 type="button"
-                onClick={() =>
-                  setActiveTab(tab)
-                }
+                onClick={() => setActiveTab(tab)}
                 className={`
                   relative
                   whitespace-nowrap
                   pb-3
                   text-[12px]
                   font-medium
-                  ${
-                    activeTab === tab
-                      ? "text-[#FF5A1F]"
-                      : "text-subheading"
-                  }
+                  ${activeTab === tab ? "text-[#FF5A1F]" : "text-subheading"}
                 `}
               >
                 {tab}
@@ -667,9 +717,7 @@ export default function RestaurantDetails() {
             <button
               key={tab}
               type="button"
-              onClick={() =>
-                setActiveTab(tab)
-              }
+              onClick={() => setActiveTab(tab)}
               className={`
                 relative
                 pb-3
@@ -723,29 +771,24 @@ export default function RestaurantDetails() {
             ERROR
         ====================================================== */}
 
-        {!loadingRestaurantItems &&
-          restaurantItemsError && (
-            <div className="py-8 text-center">
-              <p className="text-xs text-red-500">
-                Unable to load menu
-              </p>
+        {!loadingRestaurantItems && restaurantItemsError && (
+          <div className="py-8 text-center">
+            <p className="text-xs text-red-500">Unable to load menu</p>
 
-              <button
-                type="button"
-                onClick={() =>
-                  getRestaurantItems(id)
-                }
-                className="
+            <button
+              type="button"
+              onClick={() => getRestaurantItems(id)}
+              className="
                   mt-2
                   text-[11px]
                   font-medium
                   text-[#FF5A1F]
                 "
-              >
-                Try Again
-              </button>
-            </div>
-          )}
+            >
+              Try Again
+            </button>
+          </div>
+        )}
 
         {/* ======================================================
             ITEMS
@@ -756,10 +799,7 @@ export default function RestaurantDetails() {
           filteredItems.length > 0 && (
             <div className="flex flex-col gap-3">
               {filteredItems.map((item) => (
-                <ItemCard
-                  key={item._id}
-                  item={item}
-                />
+                <ItemCard key={item._id} item={item} />
               ))}
             </div>
           )}
@@ -776,14 +816,14 @@ export default function RestaurantDetails() {
                 {searchQuery
                   ? "No dishes found."
                   : activeTab === "Popular"
-                  ? "No popular dishes available."
-                  : activeTab === "Best Sellers"
-                  ? "No best sellers available."
-                  : activeTab === "Meal Combo"
-                  ? "No meal combos available."
-                  : activeTab === "Offers"
-                  ? "No offers available."
-                  : "No items available."}
+                    ? "No popular dishes available."
+                    : activeTab === "Best Sellers"
+                      ? "No best sellers available."
+                      : activeTab === "Meal Combo"
+                        ? "No meal combos available."
+                        : activeTab === "Offers"
+                          ? "No offers available."
+                          : "No items available."}
               </p>
             </div>
           )}

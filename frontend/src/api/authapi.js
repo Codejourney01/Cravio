@@ -5,7 +5,6 @@ const API_URL =
 // ================================
 // REGISTER
 // ================================
-
 export const registerUser = async (userData) => {
   const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
@@ -28,7 +27,6 @@ export const registerUser = async (userData) => {
 // ================================
 // VERIFY OTP
 // ================================
-
 export const verifyOTP = async (otpData) => {
   const response = await fetch(`${API_URL}/auth/verify-otp`, {
     method: "POST",
@@ -51,7 +49,6 @@ export const verifyOTP = async (otpData) => {
 // ================================
 // RESEND OTP
 // ================================
-
 export const resendOTP = async (email) => {
   const response = await fetch(`${API_URL}/auth/resend-otp`, {
     method: "POST",
@@ -74,7 +71,6 @@ export const resendOTP = async (email) => {
 // ================================
 // LOGIN
 // ================================
-
 export const loginUser = async (loginData) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -97,38 +93,58 @@ export const loginUser = async (loginData) => {
 // ================================
 // GET CURRENT USER
 // ================================
-
 export const getCurrentUser = async () => {
   const response = await fetch(`${API_URL}/auth/me`, {
     method: "GET",
     credentials: "include",
   });
 
-  const data = await response.json();
+  const contentType = response.headers.get("content-type");
 
   if (!response.ok) {
-    throw new Error(data.message || "Not authenticated");
+    let message = "Not authenticated";
+
+    if (contentType?.includes("application/json")) {
+      const data = await response.json();
+      message = data.message || message;
+    }
+
+    throw new Error(message);
   }
 
-  return data;
+  if (!contentType?.includes("application/json")) {
+    throw new Error("Invalid response from server");
+  }
+
+  return await response.json();
 };
 
 // ================================
 // LOGOUT
 // ================================
-
 export const logoutUser = async () => {
   const response = await fetch(`${API_URL}/auth/logout`, {
     method: "POST",
     credentials: "include",
   });
 
-  const data = await response.json();
+  const contentType = response.headers.get("content-type");
 
   if (!response.ok) {
-    throw new Error(data.message || "Logout failed");
+    let message = "Logout failed";
+
+    if (contentType?.includes("application/json")) {
+      const data = await response.json();
+      message = data.message || message;
+    }
+
+    throw new Error(message);
   }
 
-  return data;
+  if (!contentType?.includes("application/json")) {
+    throw new Error("Invalid response from server");
+  }
+
+  return await response.json();
 };
 

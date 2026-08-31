@@ -10,6 +10,7 @@ const restaurantRoutes = require("./routes/RestaurantRoutes");
 const uploadRoutes = require("./routes/uploadroute");
 const authRoutes = require("./routes/authroutes");
 const itemRoutes = require("./routes/itemroute");
+const FavouriteRoutes=require("./routes/favouriteRoutes");
 
 const app = express();
 const connectDB = require("./config/db");
@@ -99,6 +100,7 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/favorites",FavouriteRoutes);
 
 // ==========================================
 // SERVER
