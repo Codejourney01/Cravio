@@ -17,7 +17,7 @@ function FavoriteRestaurantCard({ restaurant, onRemove }) {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate(`/restaurants/${restaurant._id}`);
+    navigate(`/restaurantdetail/${restaurant._id}`);
   };
 
   const handleRemove = async (e) => {
