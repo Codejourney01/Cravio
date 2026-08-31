@@ -20,7 +20,6 @@ export default function Navbar({
 }) {
   const { isDark, toggleTheme } = useTheme();
   const { user, isAuthenticated, loadingAuth, logout } = useAuth();
-
   const navigate = useNavigate();
 
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -37,7 +36,64 @@ export default function Navbar({
   const profileImage =
     user?.profileImage ||
     user?.image ||
-    "https://i.pravatar.cc/150?img=12";
+    null;
+
+  // ==========================================
+  // INITIAL AVATAR
+  // ==========================================
+
+  const getInitial = () => {
+    return displayName.charAt(0).toUpperCase();
+  };
+
+  const avatarColors = [
+    "bg-orange-500",
+    "bg-blue-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-emerald-500",
+    "bg-indigo-500",
+    "bg-rose-500",
+    "bg-amber-500",
+  ];
+
+  const getAvatarColor = (name) => {
+    let total = 0;
+
+    for (let i = 0; i < name.length; i++) {
+      total += name.charCodeAt(i);
+    }
+
+    return avatarColors[total % avatarColors.length];
+  };
+
+  const avatarColor = getAvatarColor(displayName);
+
+  // ==========================================
+  // AVATAR COMPONENT
+  // ==========================================
+
+  const Avatar = ({ size = "h-8 w-8", textSize = "text-xs" }) => {
+    if (profileImage) {
+      return (
+        <img
+          src={profileImage}
+          alt={displayName}
+          className={`${size} rounded-full object-cover`}
+        />
+      );
+    }
+
+    return (
+      <div
+        className={`${size} ${avatarColor} flex items-center justify-center rounded-full font-semibold text-white`}
+      >
+        <span className={textSize}>
+          {getInitial()}
+        </span>
+      </div>
+    );
+  };
 
   // ==========================================
   // LOGOUT
@@ -46,9 +102,7 @@ export default function Navbar({
   const handleLogout = async () => {
     try {
       await logout();
-
       setIsProfileOpen(false);
-
       navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
@@ -160,11 +214,7 @@ export default function Navbar({
                     aria-label="Open profile menu"
                     className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100"
                   >
-                    <img
-                      src={profileImage}
-                      alt={displayName}
-                      className="h-full w-full object-cover"
-                    />
+                    <Avatar />
                   </button>
 
                   {/* MOBILE DROPDOWN */}
@@ -175,7 +225,6 @@ export default function Navbar({
                       {/* USER INFO */}
 
                       <div className="border-b border-gray-100 px-3 py-3">
-
                         <p className="truncate text-xs font-semibold text-heading">
                           {displayName}
                         </p>
@@ -185,7 +234,6 @@ export default function Navbar({
                             {user.email}
                           </p>
                         )}
-
                       </div>
 
                       {/* ACCOUNT */}
@@ -217,10 +265,8 @@ export default function Navbar({
                       >
                         Logout
                       </button>
-
                     </div>
                   )}
-
                 </div>
               ) : (
                 <button
@@ -233,7 +279,6 @@ export default function Navbar({
               )}
             </>
           )}
-
         </div>
       </div>
 
@@ -243,12 +288,9 @@ export default function Navbar({
 
       <div className="flex w-full items-center justify-between px-4 py-3 md:px-10">
 
-        {/* =================================================
-            ADDRESS
-        ================================================= */}
+        {/* ADDRESS */}
 
         <div className="hidden min-[721px]:flex items-center">
-
           <button
             type="button"
             className="flex items-center gap-2 text-sm text-subheading transition-colors duration-200 hover:text-heading"
@@ -268,16 +310,12 @@ export default function Navbar({
               strokeWidth={1.8}
             />
           </button>
-
         </div>
 
-        {/* =================================================
-            SEARCH
-        ================================================= */}
+        {/* SEARCH */}
 
         {showSearch && (
           <div className="flex w-full items-center justify-center min-[721px]:flex-1 min-[721px]:px-10">
-
             <div className="mt-4 flex h-[40px] w-[95%] items-center rounded-md bg-white px-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)] min-[721px]:mt-0 min-[721px]:w-full min-[721px]:max-w-[500px]">
 
               <FiSearch
@@ -291,15 +329,11 @@ export default function Navbar({
                 placeholder="What are you craving for...?"
                 className="ml-2 w-full bg-transparent text-[12px] text-heading outline-none placeholder:text-subheading"
               />
-
             </div>
-
           </div>
         )}
 
-        {/* =================================================
-            DESKTOP RIGHT SIDE
-        ================================================= */}
+        {/* DESKTOP RIGHT SIDE */}
 
         <div className="hidden min-[721px]:flex items-center gap-3">
 
@@ -333,9 +367,7 @@ export default function Navbar({
             />
           </button>
 
-          {/* =================================================
-              USER
-          ================================================= */}
+          {/* USER */}
 
           {!loadingAuth && (
             <>
@@ -352,22 +384,15 @@ export default function Navbar({
                     className="ml-1 flex cursor-pointer items-center gap-2"
                   >
 
-                    {/* PROFILE IMAGE */}
+                    {/* PROFILE IMAGE / INITIAL */}
 
                     <div className="h-8 w-8 overflow-hidden rounded-full ring-1 ring-gray-100">
-
-                      <img
-                        src={profileImage}
-                        alt={displayName}
-                        className="h-full w-full object-cover"
-                      />
-
+                      <Avatar />
                     </div>
 
                     {/* USERNAME */}
 
                     <div className="flex items-center gap-1">
-
                       <span className="max-w-[120px] truncate text-[12px] font-medium text-heading">
                         {displayName}
                       </span>
@@ -377,14 +402,10 @@ export default function Navbar({
                         strokeWidth={1.8}
                         className="text-subheading"
                       />
-
                     </div>
-
                   </button>
 
-                  {/* =================================================
-                      PROFILE DROPDOWN
-                  ================================================= */}
+                  {/* PROFILE DROPDOWN */}
 
                   {isProfileOpen && (
                     <div className="absolute right-0 top-11 z-50 w-56 overflow-hidden rounded-xl border border-gray-100 bg-white p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
@@ -395,22 +416,14 @@ export default function Navbar({
 
                         <div className="flex items-center gap-2.5">
 
-                          {/* PROFILE IMAGE */}
-
                           <div className="h-9 w-9 shrink-0 overflow-hidden rounded-full">
-
-                            <img
-                              src={profileImage}
-                              alt={displayName}
-                              className="h-full w-full object-cover"
+                            <Avatar
+                              size="h-9 w-9"
+                              textSize="text-sm"
                             />
-
                           </div>
 
-                          {/* USER DETAILS */}
-
                           <div className="min-w-0">
-
                             <p className="truncate text-xs font-semibold text-heading">
                               {displayName}
                             </p>
@@ -418,11 +431,9 @@ export default function Navbar({
                             <p className="truncate text-[10px] text-subheading">
                               {user?.email}
                             </p>
-
                           </div>
 
                         </div>
-
                       </div>
 
                       {/* ACCOUNT */}
@@ -457,13 +468,11 @@ export default function Navbar({
 
                     </div>
                   )}
-
                 </div>
               ) : (
                 /* NOT LOGGED IN */
 
                 <div className="ml-2 flex items-center gap-2">
-
                   <button
                     type="button"
                     onClick={handleCreateAccount}
@@ -471,15 +480,12 @@ export default function Navbar({
                   >
                     Create account
                   </button>
-
                 </div>
               )}
             </>
           )}
 
-          {/* =================================================
-              THEME BUTTON
-          ================================================= */}
+          {/* THEME BUTTON */}
 
           <button
             type="button"

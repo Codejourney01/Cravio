@@ -9,6 +9,7 @@ const restaurantRoutes = require("./routes/RestaurantRoutes");
 const uploadRoutes = require("./routes/uploadroute");
 const authRoutes = require("./routes/authroutes");
 const itemRoutes = require("./routes/itemroute");
+const favoriteRoutes = require("./routes/favouriteroutes");
 
 const app = express();
 const connectDB = require("./config/db");
@@ -62,6 +63,7 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/favorites", favoriteRoutes);
 const PORT = process.env.PORT || 5001;
 
 connectDB();
