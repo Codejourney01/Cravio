@@ -33,7 +33,7 @@ app.use(
     saveUninitialized: false,
 
     store: MongoStore.create({
-      mongoUrl: process.env.MONGODB_URI,
+      mongoUrl: process.env.MONGO_URI,
     }),
 
     cookie: {
@@ -44,7 +44,6 @@ app.use(
     },
   })
 );
-
 app.get("/", (req, res) => {
   res.json({
     success: true,
