@@ -3,7 +3,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const getFavoriteRestaurants = async () => {
   const response = await fetch(
-    `${API_URL}/api/favorites/restaurants`,
+    `${API_URL}/favorites/restaurants`,
     {
       method: "GET",
       credentials: "include",
@@ -23,7 +23,7 @@ export const getFavoriteRestaurants = async () => {
 
 export const addFavoriteRestaurant = async (restaurantId) => {
   const response = await fetch(
-    `${API_URL}/api/favorites/restaurants/${restaurantId}`,
+    `${API_URL}/favorites/restaurants/${restaurantId}`,
     {
       method: "POST",
       credentials: "include",
@@ -46,7 +46,7 @@ export const addFavoriteRestaurant = async (restaurantId) => {
 
 export const removeFavoriteRestaurant = async (restaurantId) => {
   const response = await fetch(
-    `${API_URL}/api/favorites/restaurants/${restaurantId}`,
+    `${API_URL}/favorites/restaurants/${restaurantId}`,
     {
       method: "DELETE",
       credentials: "include",
