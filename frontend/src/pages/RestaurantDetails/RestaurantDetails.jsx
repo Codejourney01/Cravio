@@ -1,20 +1,21 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
   FiChevronLeft,
   FiClock,
   FiHeart,
   FiSearch,
 } from "react-icons/fi";
+
 import { FaStar } from "react-icons/fa";
+
 import { Swiper, SwiperSlide } from "swiper/react";
+
 import "swiper/css";
-import { toast } from "react-toastify";
 
 import { useRestaurants } from "../../context/RestaurantContext";
 import { useItems } from "../../context/ItemContext";
-import { useFavorites } from "../../context/Favouritecontext";
 
 import ItemCard, {
   ItemCardSkeleton,
@@ -46,17 +47,6 @@ export default function RestaurantDetails() {
   } = useItems();
 
   // ============================================================
-  // FAVORITE CONTEXT
-  // ============================================================
-
-  const {
-    addFavorite,
-    removeFavorite,
-    isFavorite,
-    loadingFavorites,
-  } = useFavorites();
-
-  // ============================================================
   // FIND RESTAURANT
   // ============================================================
 
@@ -69,9 +59,14 @@ export default function RestaurantDetails() {
   // ============================================================
 
   const [activeTab, setActiveTab] = useState("For You");
+
   const [searchQuery, setSearchQuery] = useState("");
+
   const [bannerLoading, setBannerLoading] = useState(true);
-  const [favouriteLoading, setFavouriteLoading] = useState(false);
+
+  const [isFavourite, setIsFavourite] = useState(false);
+
+  // Randomized items
   const [displayItems, setDisplayItems] = useState([]);
 
   // ============================================================
@@ -87,14 +82,6 @@ export default function RestaurantDetails() {
   ];
 
   // ============================================================
-  // CURRENT FAVORITE STATUS
-  // ============================================================
-
-  const isFavourite = restaurant?._id
-    ? isFavorite(restaurant._id)
-    : false;
-
-  // ============================================================
   // FETCH RESTAURANT ITEMS
   // ============================================================
 
@@ -102,7 +89,7 @@ export default function RestaurantDetails() {
     if (!id) return;
 
     getRestaurantItems(id);
-  }, [id, getRestaurantItems]);
+  }, [id]);
 
   // ============================================================
   // RESET BANNER LOADING
@@ -135,8 +122,16 @@ export default function RestaurantDetails() {
 
   const tabFilteredItems = displayItems.filter((item) => {
     switch (activeTab) {
+      // --------------------------------------------------------
+      // FOR YOU
+      // --------------------------------------------------------
+
       case "For You":
         return item.isAvailable !== false;
+
+      // --------------------------------------------------------
+      // POPULAR
+      // --------------------------------------------------------
 
       case "Popular":
         return (
@@ -144,22 +139,38 @@ export default function RestaurantDetails() {
           Number(item.orderCount || 0) > 0
         );
 
+      // --------------------------------------------------------
+      // BEST SELLERS
+      // --------------------------------------------------------
+
       case "Best Sellers":
         return (
           item.isAvailable !== false &&
-          (item.isBestSeller === true ||
+          (
+            item.isBestSeller === true ||
             item.bestSeller === true ||
-            Number(item.orderCount || 0) >= 20)
+            Number(item.orderCount || 0) >= 20
+          )
         );
+
+      // --------------------------------------------------------
+      // MEAL COMBO
+      // --------------------------------------------------------
 
       case "Meal Combo":
         return (
           item.isAvailable !== false &&
-          (item.category?.toLowerCase() === "combo" ||
+          (
+            item.category?.toLowerCase() === "combo" ||
             item.category?.toLowerCase() === "meal combo" ||
             item.type?.toLowerCase() === "combo" ||
-            item.name?.toLowerCase().includes("combo"))
+            item.name?.toLowerCase().includes("combo")
+          )
         );
+
+      // --------------------------------------------------------
+      // OFFERS
+      // --------------------------------------------------------
 
       case "Offers":
         return (
@@ -185,66 +196,87 @@ export default function RestaurantDetails() {
   });
 
   // ============================================================
-  // ADD / REMOVE FAVOURITE USING CONTEXT
-  // ============================================================
-
-  const handleFavourite = async () => {
-    if (!restaurant?._id || favouriteLoading) return;
-
-    setFavouriteLoading(true);
-
-    try {
-      if (!isFavourite) {
-        await addFavorite(restaurant._id);
-
-        toast.success("Added to favourites");
-      } else {
-        await removeFavorite(restaurant._id);
-
-        toast.info("Removed from favourites");
-      }
-    } catch (error) {
-      console.error("Favourite error:", error);
-
-      toast.error(
-        error.message || "Something went wrong"
-      );
-    } finally {
-      setFavouriteLoading(false);
-    }
-  };
-
-  // ============================================================
   // RESTAURANT PAGE SKELETON
   // ============================================================
 
   const RestaurantDetailsSkeleton = () => {
     return (
       <div className="w-full pb-10">
+        {/* ======================================================
+            BACK BUTTON
+        ====================================================== */}
+
         <div className="md:px-4">
           <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
         </div>
 
+        {/* ======================================================
+            BANNER
+        ====================================================== */}
+
         <div className="mt-4 w-full px-3 md:px-7 md:pr-9">
-          <div className="h-[120px] w-full animate-pulse rounded-md bg-gray-200 md:h-[197px]" />
+          <div
+            className="
+              h-[120px]
+              w-full
+              animate-pulse
+              rounded-md
+              bg-gray-200
+              md:h-[197px]
+            "
+          />
         </div>
+
+        {/* ======================================================
+            RESTAURANT INFO
+        ====================================================== */}
 
         <div className="mt-5 px-3 md:px-7 md:pr-9">
           <div className="flex items-center justify-between">
-            <div className="h-6 w-[45%] animate-pulse rounded bg-gray-200 md:h-8 md:w-[30%]" />
+            {/* Restaurant name */}
+            <div
+              className="
+                h-6
+                w-[45%]
+                animate-pulse
+                rounded
+                bg-gray-200
+                md:h-8
+                md:w-[30%]
+              "
+            />
 
+            {/* Favourite */}
             <div className="h-7 w-7 animate-pulse rounded-full bg-gray-200" />
           </div>
 
+          {/* Rating / delivery */}
           <div className="mt-3 flex gap-4">
             <div className="h-3 w-[110px] animate-pulse rounded bg-gray-200" />
+
             <div className="h-3 w-[90px] animate-pulse rounded bg-gray-200" />
           </div>
         </div>
 
+        {/* ======================================================
+            SEARCH
+        ====================================================== */}
+
         <div className="mt-5 flex justify-center">
-          <div className="h-[40px] w-[95%] animate-pulse rounded-md bg-gray-200" />
+          <div
+            className="
+              h-[40px]
+              w-[95%]
+              animate-pulse
+              rounded-md
+              bg-gray-200
+            "
+          />
         </div>
+
+        {/* ======================================================
+            MOBILE TABS
+        ====================================================== */}
 
         <div className="mt-6 px-3 md:hidden">
           <Swiper
@@ -262,16 +294,30 @@ export default function RestaurantDetails() {
           </Swiper>
         </div>
 
+        {/* ======================================================
+            DESKTOP TABS
+        ====================================================== */}
+
         <div className="mt-6 hidden px-7 md:block">
           <div className="flex gap-7">
             {[1, 2, 3, 4, 5].map((item) => (
               <div
                 key={item}
-                className="h-4 w-[70px] animate-pulse rounded bg-gray-200"
+                className="
+                  h-4
+                  w-[70px]
+                  animate-pulse
+                  rounded
+                  bg-gray-200
+                "
               />
             ))}
           </div>
         </div>
+
+        {/* ======================================================
+            MENU ITEM SKELETONS
+        ====================================================== */}
 
         <div className="mt-7 px-3 md:px-7 md:pr-9">
           <div className="flex flex-col gap-3">
@@ -331,7 +377,16 @@ export default function RestaurantDetails() {
           <button
             type="button"
             onClick={() => navigate("/restaurants")}
-            className="mt-4 rounded-md bg-[#FF5A1F] px-4 py-2 text-xs text-white hover:opacity-90"
+            className="
+              mt-4
+              rounded-md
+              bg-[#FF5A1F]
+              px-4
+              py-2
+              text-xs
+              text-white
+              hover:opacity-90
+            "
           >
             Back to Restaurants
           </button>
@@ -346,14 +401,25 @@ export default function RestaurantDetails() {
 
   return (
     <div className="w-full pb-10">
-      {/* BACK BUTTON */}
+      {/* ========================================================
+          BACK BUTTON
+      ======================================================== */}
 
       <div className="md:px-4">
         <button
           type="button"
           onClick={() => navigate(-1)}
           aria-label="Go back"
-          className="flex h-8 w-8 items-center justify-center text-heading transition hover:text-[#FF5A1F]"
+          className="
+            flex
+            h-8
+            w-8
+            items-center
+            justify-center
+            text-heading
+            transition
+            hover:text-[#FF5A1F]
+          "
         >
           <FiChevronLeft
             size={17}
@@ -362,12 +428,33 @@ export default function RestaurantDetails() {
         </button>
       </div>
 
-      {/* BANNER */}
+      {/* ========================================================
+          BANNER
+      ======================================================== */}
 
       <div className="mt-4 w-full px-3 md:px-7 md:pr-9">
-        <div className="relative h-[120px] w-full overflow-hidden rounded-md md:h-[197px]">
+        <div
+          className="
+            relative
+            h-[120px]
+            w-full
+            overflow-hidden
+            rounded-md
+            md:h-[197px]
+          "
+        >
+          {/* Banner Skeleton */}
           {bannerLoading && (
-            <div className="absolute inset-0 z-10 animate-pulse rounded-md bg-gray-200" />
+            <div
+              className="
+                absolute
+                inset-0
+                z-10
+                animate-pulse
+                rounded-md
+                bg-gray-200
+              "
+            />
           )}
 
           <img
@@ -377,16 +464,26 @@ export default function RestaurantDetails() {
             decoding="async"
             onLoad={() => setBannerLoading(false)}
             onError={() => setBannerLoading(false)}
-            className={`h-full w-full rounded-md object-cover transition-opacity duration-300 ${
-              bannerLoading
-                ? "opacity-0"
-                : "opacity-100"
-            }`}
+            className={`
+              h-full
+              w-full
+              rounded-md
+              object-cover
+              transition-opacity
+              duration-300
+              ${
+                bannerLoading
+                  ? "opacity-0"
+                  : "opacity-100"
+              }
+            `}
           />
         </div>
       </div>
 
-      {/* RESTAURANT INFORMATION */}
+      {/* ========================================================
+          RESTAURANT INFORMATION
+      ======================================================== */}
 
       <div className="mt-5 px-3 md:px-7 md:pr-9">
         <div className="flex items-center justify-between">
@@ -396,32 +493,44 @@ export default function RestaurantDetails() {
 
           <button
             type="button"
-            aria-label={
-              isFavourite
-                ? "Remove from favourites"
-                : "Add to favourites"
+            aria-label="Add to favourites"
+            onClick={() =>
+              setIsFavourite(!isFavourite)
             }
-            disabled={
-              favouriteLoading || loadingFavorites
-            }
-            onClick={handleFavourite}
-            className={`flex h-7 w-7 items-center justify-center rounded-full transition-all duration-200 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70 ${
-              isFavourite
-                ? "bg-[#FF5A1F] text-white"
-                : "bg-[#FF5A1F]/[57%] text-white hover:bg-[#FF5A1F]"
-            }`}
+            className={`
+              flex
+              h-7
+              w-7
+              items-center
+              justify-center
+              rounded-full
+              transition-all
+              duration-200
+              active:scale-95
+              ${
+                isFavourite
+                  ? "bg-[#FF5A1F] text-white"
+                  : "bg-[#FF5A1F]/[57%] text-white hover:bg-[#FF5A1F]"
+              }
+            `}
           >
             <FiHeart
               size={12}
               strokeWidth={1.8}
               className={
-                isFavourite ? "fill-white" : ""
+                isFavourite
+                  ? "fill-white"
+                  : ""
               }
             />
           </button>
         </div>
 
+        {/* Rating + Delivery Time */}
+
         <div className="mt-2 flex items-center gap-4">
+          {/* Rating */}
+
           <div className="flex items-center gap-1">
             <FaStar
               className="text-yellow-400"
@@ -434,6 +543,8 @@ export default function RestaurantDetails() {
             </span>
           </div>
 
+          {/* Delivery Time */}
+
           <div className="flex items-center gap-1">
             <FiClock
               className="text-subheading"
@@ -442,16 +553,30 @@ export default function RestaurantDetails() {
             />
 
             <span className="text-[12px] text-subheading">
-              {restaurant.deliveryTime || "25 - 30 min"}
+              {restaurant.deliveryTime ||
+                "25 - 30 min"}
             </span>
           </div>
         </div>
       </div>
 
-      {/* SEARCH */}
+      {/* ========================================================
+          SEARCH
+      ======================================================== */}
 
       <div className="mt-5 flex w-full items-center justify-center">
-        <div className="flex h-[40px] w-[95%] items-center rounded-md bg-white px-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
+        <div
+          className="
+            flex
+            h-[40px]
+            w-[95%]
+            items-center
+            rounded-md
+            bg-white
+            px-4
+            shadow-[0_2px_12px_rgba(0,0,0,0.08)]
+          "
+        >
           <FiSearch
             className="shrink-0 text-subheading"
             size={14}
@@ -465,12 +590,22 @@ export default function RestaurantDetails() {
               setSearchQuery(e.target.value)
             }
             placeholder="Search dishes..."
-            className="ml-2 w-full bg-transparent text-[12px] text-heading outline-none placeholder:text-subheading"
+            className="
+              ml-2
+              w-full
+              bg-transparent
+              text-[12px]
+              text-heading
+              outline-none
+              placeholder:text-subheading
+            "
           />
         </div>
       </div>
 
-      {/* MOBILE TABS */}
+      {/* ========================================================
+          MOBILE TABS
+      ======================================================== */}
 
       <div className="mt-6 px-3 md:hidden">
         <Swiper
@@ -485,17 +620,36 @@ export default function RestaurantDetails() {
             >
               <button
                 type="button"
-                onClick={() => setActiveTab(tab)}
-                className={`relative whitespace-nowrap pb-3 text-[12px] font-medium ${
-                  activeTab === tab
-                    ? "text-[#FF5A1F]"
-                    : "text-subheading"
-                }`}
+                onClick={() =>
+                  setActiveTab(tab)
+                }
+                className={`
+                  relative
+                  whitespace-nowrap
+                  pb-3
+                  text-[12px]
+                  font-medium
+                  ${
+                    activeTab === tab
+                      ? "text-[#FF5A1F]"
+                      : "text-subheading"
+                  }
+                `}
               >
                 {tab}
 
                 {activeTab === tab && (
-                  <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-[#FF5A1F]" />
+                  <span
+                    className="
+                      absolute
+                      bottom-0
+                      left-0
+                      h-[2px]
+                      w-full
+                      rounded-full
+                      bg-[#FF5A1F]
+                    "
+                  />
                 )}
               </button>
             </SwiperSlide>
@@ -503,7 +657,9 @@ export default function RestaurantDetails() {
         </Swiper>
       </div>
 
-      {/* DESKTOP TABS */}
+      {/* ========================================================
+          DESKTOP TABS
+      ======================================================== */}
 
       <div className="mt-6 hidden px-3 md:block md:px-7 md:pr-9">
         <div className="flex items-center gap-7">
@@ -511,26 +667,50 @@ export default function RestaurantDetails() {
             <button
               key={tab}
               type="button"
-              onClick={() => setActiveTab(tab)}
-              className={`relative pb-3 text-[12px] font-medium ${
-                activeTab === tab
-                  ? "text-[#FF5A1F]"
-                  : "text-subheading hover:text-heading"
-              }`}
+              onClick={() =>
+                setActiveTab(tab)
+              }
+              className={`
+                relative
+                pb-3
+                text-[12px]
+                font-medium
+                ${
+                  activeTab === tab
+                    ? "text-[#FF5A1F]"
+                    : "text-subheading hover:text-heading"
+                }
+              `}
             >
               {tab}
 
               {activeTab === tab && (
-                <span className="absolute bottom-0 left-0 h-[2px] w-full rounded-full bg-[#FF5A1F]" />
+                <span
+                  className="
+                    absolute
+                    bottom-0
+                    left-0
+                    h-[2px]
+                    w-full
+                    rounded-full
+                    bg-[#FF5A1F]
+                  "
+                />
               )}
             </button>
           ))}
         </div>
       </div>
 
-      {/* MENU ITEMS */}
+      {/* ========================================================
+          MENU ITEMS
+      ======================================================== */}
 
       <div className="mt-7 px-3 md:px-7 md:pr-9">
+        {/* ======================================================
+            ITEM LOADING SKELETON
+        ====================================================== */}
+
         {loadingRestaurantItems && (
           <div className="flex flex-col gap-3">
             {[1, 2, 3, 4].map((item) => (
@@ -538,6 +718,10 @@ export default function RestaurantDetails() {
             ))}
           </div>
         )}
+
+        {/* ======================================================
+            ERROR
+        ====================================================== */}
 
         {!loadingRestaurantItems &&
           restaurantItemsError && (
@@ -551,12 +735,21 @@ export default function RestaurantDetails() {
                 onClick={() =>
                   getRestaurantItems(id)
                 }
-                className="mt-2 text-[11px] font-medium text-[#FF5A1F]"
+                className="
+                  mt-2
+                  text-[11px]
+                  font-medium
+                  text-[#FF5A1F]
+                "
               >
                 Try Again
               </button>
             </div>
           )}
+
+        {/* ======================================================
+            ITEMS
+        ====================================================== */}
 
         {!loadingRestaurantItems &&
           !restaurantItemsError &&
@@ -570,6 +763,10 @@ export default function RestaurantDetails() {
               ))}
             </div>
           )}
+
+        {/* ======================================================
+            NO ITEMS
+        ====================================================== */}
 
         {!loadingRestaurantItems &&
           !restaurantItemsError &&
@@ -594,4 +791,3 @@ export default function RestaurantDetails() {
     </div>
   );
 }
-
