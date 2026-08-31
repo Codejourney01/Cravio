@@ -1,7 +1,9 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
@@ -36,6 +38,8 @@ export function ItemProvider({ children }) {
   // ============================================================
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchItems = async () => {
       try {
         setLoadingItems(true);
@@ -43,116 +47,283 @@ export function ItemProvider({ children }) {
 
         const data = await getItems();
 
-        console.log("ALL ITEMS API:", data);
-
         const itemsData = Array.isArray(data)
           ? data
-          : data.items || [];
+          : Array.isArray(data?.items)
+          ? data.items
+          : [];
 
-        setItems(itemsData);
+        if (isMounted) {
+          setItems(itemsData);
+        }
       } catch (error) {
         console.error("Failed to fetch items:", error);
-        setItemError("Failed to load items");
-        setItems([]);
+
+        if (isMounted) {
+          setItemError(
+            error?.message || "Failed to load items"
+          );
+          setItems([]);
+        }
       } finally {
-        setLoadingItems(false);
+        if (isMounted) {
+          setLoadingItems(false);
+        }
       }
     };
 
     fetchItems();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // ============================================================
   // GET ITEMS BY RESTAURANT
   // ============================================================
 
-  const getRestaurantItems = async (restaurantId) => {
-    try {
-      setLoadingRestaurantItems(true);
-      setRestaurantItemsError("");
+  const getRestaurantItems = useCallback(
+    async (restaurantId) => {
+      if (!restaurantId) {
+        setRestaurantItems([]);
+        setRestaurantItemsError("Restaurant ID is required");
+        return [];
+      }
 
-      console.log(
-        "Fetching items for restaurant:",
-        restaurantId
-      );
+      try {
+        setLoadingRestaurantItems(true);
+        setRestaurantItemsError("");
 
-      const data = await getItemsByRestaurant(restaurantId);
+        const data = await getItemsByRestaurant(restaurantId);
 
-      console.log("RESTAURANT ITEMS API:", data);
+        const restaurantItemsData = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.items)
+          ? data.items
+          : [];
 
-      /*
-        Supports both:
+        setRestaurantItems(restaurantItemsData);
 
-        {
-          items: [...]
-        }
+        return restaurantItemsData;
+      } catch (error) {
+        console.error(
+          "Failed to fetch restaurant items:",
+          error
+        );
 
-        and
+        setRestaurantItemsError(
+          error?.message || "Failed to load restaurant menu"
+        );
 
-        [...]
-      */
+        setRestaurantItems([]);
 
-      const restaurantItemsData = Array.isArray(data)
-        ? data
-        : data.items || [];
-
-      console.log(
-        "RESTAURANT ITEMS ARRAY:",
-        restaurantItemsData
-      );
-
-      setRestaurantItems(restaurantItemsData);
-
-      return restaurantItemsData;
-    } catch (error) {
-      console.error(
-        "Failed to fetch restaurant items:",
-        error
-      );
-
-      setRestaurantItemsError(
-        "Failed to load restaurant menu"
-      );
-
-      setRestaurantItems([]);
-
-      return [];
-    } finally {
-      setLoadingRestaurantItems(false);
-    }
-  };
+        return [];
+      } finally {
+        setLoadingRestaurantItems(false);
+      }
+    },
+    []
+  );
 
   // ============================================================
   // GET ITEM BY ID
   // ============================================================
 
-  const getItemById = (id) => {
-    return items.find(
-      (item) =>
-        String(item._id) === String(id) ||
-        String(item.id) === String(id)
-    );
-  };
+  const getItemById = useCallback(
+    (id) => {
+      if (!id) return undefined;
 
-  // ============================================================
-  // POPULAR ITEMS
-  // ============================================================
-
-  const popularItems = [...items]
-    .filter((item) => item.orderCount > 0)
-    .sort(
-      (a, b) =>
-        (b.orderCount || 0) -
-        (a.orderCount || 0)
-    );
+      return items.find(
+        (item) =>
+          String(item?._id) === String(id) ||
+          String(item?.id) === String(id)
+      );
+    },
+    [items]
+  );
 
   // ============================================================
   // AVAILABLE ITEMS
   // ============================================================
 
-  const availableItems = items.filter(
-    (item) => item.isAvailable !== false
-  );
+  const availableItems = useMemo(() => {
+    return items.filter(
+      (item) => item?.isAvailable !== false
+    );
+  }, [items]);
+
+  // ============================================================
+  // POPULAR ITEMS
+  // ============================================================
+
+  const popularItems = useMemo(() => {
+    return [...items]
+      .filter(
+        (item) =>
+          item?.isAvailable !== false &&
+          Number(item?.orderCount || 0) > 0
+      )
+      .sort(
+        (a, b) =>
+          Number(b?.orderCount || 0) -
+          Number(a?.orderCount || 0)
+      );
+  }, [items]);
+
+  // ============================================================
+  // BEST SELLER ITEMS
+  // ============================================================
+
+  const bestSellerItems = useMemo(() => {
+    return [...items]
+      .filter(
+        (item) =>
+          item?.isAvailable !== false &&
+          (
+            item?.isBestSeller === true ||
+            item?.bestSeller === true ||
+            Number(item?.orderCount || 0) >= 20
+          )
+      )
+      .sort(
+        (a, b) =>
+          Number(b?.orderCount || 0) -
+          Number(a?.orderCount || 0)
+      );
+  }, [items]);
+
+  // ============================================================
+  // COMBO ITEMS
+  // ============================================================
+
+  const comboItems = useMemo(() => {
+    return items.filter((item) => {
+      if (item?.isAvailable === false) return false;
+
+      const category = String(
+        item?.category || ""
+      ).toLowerCase();
+
+      const type = String(
+        item?.type || ""
+      ).toLowerCase();
+
+      const name = String(
+        item?.name || ""
+      ).toLowerCase();
+
+      return (
+        category === "combo" ||
+        category === "meal combo" ||
+        type === "combo" ||
+        name.includes("combo")
+      );
+    });
+  }, [items]);
+
+  // ============================================================
+  // OFFER ITEMS
+  // ============================================================
+
+  const offerItems = useMemo(() => {
+    return items.filter(
+      (item) =>
+        item?.isAvailable !== false &&
+        Number(item?.discount || 0) > 0
+    );
+  }, [items]);
+
+  // ============================================================
+  // RESTAURANT AVAILABLE ITEMS
+  // ============================================================
+
+  const restaurantAvailableItems = useMemo(() => {
+    return restaurantItems.filter(
+      (item) => item?.isAvailable !== false
+    );
+  }, [restaurantItems]);
+
+  // ============================================================
+  // RESTAURANT POPULAR ITEMS
+  // ============================================================
+
+  const restaurantPopularItems = useMemo(() => {
+    return [...restaurantItems]
+      .filter(
+        (item) =>
+          item?.isAvailable !== false &&
+          Number(item?.orderCount || 0) > 0
+      )
+      .sort(
+        (a, b) =>
+          Number(b?.orderCount || 0) -
+          Number(a?.orderCount || 0)
+      );
+  }, [restaurantItems]);
+
+  // ============================================================
+  // RESTAURANT BEST SELLERS
+  // ============================================================
+
+  const restaurantBestSellerItems = useMemo(() => {
+    return [...restaurantItems]
+      .filter(
+        (item) =>
+          item?.isAvailable !== false &&
+          (
+            item?.isBestSeller === true ||
+            item?.bestSeller === true ||
+            Number(item?.orderCount || 0) >= 20
+          )
+      )
+      .sort(
+        (a, b) =>
+          Number(b?.orderCount || 0) -
+          Number(a?.orderCount || 0)
+      );
+  }, [restaurantItems]);
+
+  // ============================================================
+  // RESTAURANT COMBO ITEMS
+  // ============================================================
+
+  const restaurantComboItems = useMemo(() => {
+    return restaurantItems.filter((item) => {
+      if (item?.isAvailable === false) return false;
+
+      const category = String(
+        item?.category || ""
+      ).toLowerCase();
+
+      const type = String(
+        item?.type || ""
+      ).toLowerCase();
+
+      const name = String(
+        item?.name || ""
+      ).toLowerCase();
+
+      return (
+        category === "combo" ||
+        category === "meal combo" ||
+        type === "combo" ||
+        name.includes("combo")
+      );
+    });
+  }, [restaurantItems]);
+
+  // ============================================================
+  // RESTAURANT OFFER ITEMS
+  // ============================================================
+
+  const restaurantOfferItems = useMemo(() => {
+    return restaurantItems.filter(
+      (item) =>
+        item?.isAvailable !== false &&
+        Number(item?.discount || 0) > 0
+    );
+  }, [restaurantItems]);
 
   // ============================================================
   // PROVIDER
@@ -161,27 +332,48 @@ export function ItemProvider({ children }) {
   return (
     <ItemContext.Provider
       value={{
-        // All items
+        // ======================================================
+        // ALL ITEMS
+        // ======================================================
+
         items,
-
-        // Popular items
-        popularItems,
-
-        // Available items
-        availableItems,
-
-        // Single item
-        getItemById,
-
-        // Restaurant menu
-        restaurantItems,
-        getRestaurantItems,
-        loadingRestaurantItems,
-        restaurantItemsError,
-
-        // All items loading/error
         loadingItems,
         itemError,
+
+        // ======================================================
+        // GLOBAL FILTERED ITEMS
+        // ======================================================
+
+        availableItems,
+        popularItems,
+        bestSellerItems,
+        comboItems,
+        offerItems,
+
+        // ======================================================
+        // SINGLE ITEM
+        // ======================================================
+
+        getItemById,
+
+        // ======================================================
+        // RESTAURANT MENU
+        // ======================================================
+
+        restaurantItems,
+        loadingRestaurantItems,
+        restaurantItemsError,
+        getRestaurantItems,
+
+        // ======================================================
+        // RESTAURANT FILTERED ITEMS
+        // ======================================================
+
+        restaurantAvailableItems,
+        restaurantPopularItems,
+        restaurantBestSellerItems,
+        restaurantComboItems,
+        restaurantOfferItems,
       }}
     >
       {children}
