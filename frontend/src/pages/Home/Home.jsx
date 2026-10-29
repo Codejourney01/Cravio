@@ -9,9 +9,12 @@ import "swiper/css";
 import "swiper/css/free-mode";
 import "swiper/css/navigation";
 
-import cofeebanner from "../../assets/images/banners/Cofee.webp";
+import cofeebanner from "../../assets/images/banners/coffebanner.webp";
 import banner2 from "../../assets/images/banners/banner2.jpeg";
 import banner3 from "../../assets/images/banners/banner3.jpeg";
+import bannermobile from "../../assets/images/banners/bannermobile.png"
+import banner3mobile from "../../assets/images/banners/banner3-mobile.png"
+import banner2mobile from "../../assets/images/banners/banner2mobile.png"
 
 import Heading from "../../components/Headings/Heading";
 import CategoryCard from "../../components/Cards/CategoryCard";
@@ -305,38 +308,59 @@ export default function Home() {
           {/* Banner 1 */}
 
           <SwiperSlide>
-            <img
-              src={cofeebanner}
-              loading="eager"
-              decoding="async"
-              className="w-full h-[180px] md:h-[300px] object-cover rounded-md"
-              alt="Coffee Banner"
-            />
+          <picture>
+    <source
+      media="(max-width: 767px)"
+      srcSet={bannermobile}
+    />
+
+    <img
+      src={cofeebanner}
+      loading="lazy"
+      decoding="async"
+      className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+      alt="Belgian Waffles Banner"
+    />
+  </picture>
           </SwiperSlide>
 
           {/* Banner 2 */}
 
           <SwiperSlide>
-            <img
-              src={banner2}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
-              alt="Banner 2"
-            />
+             <picture>
+    <source
+      media="(max-width: 767px)"
+      srcSet={banner2mobile}
+    />
+
+    <img
+      src={banner2}
+      loading="lazy"
+      decoding="async"
+      className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+      alt="Belgian Waffles Banner"
+    />
+  </picture>
           </SwiperSlide>
 
           {/* Banner 3 */}
 
           <SwiperSlide>
-            <img
-              src={banner3}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
-              alt="Banner 3"
-            />
-          </SwiperSlide>
+  <picture>
+    <source
+      media="(max-width: 767px)"
+      srcSet={banner3mobile}
+    />
+
+    <img
+      src={banner3}
+      loading="lazy"
+      decoding="async"
+      className="w-full h-[180px] md:h-[300px] object-cover rounded-md object-top"
+      alt="Belgian Waffles Banner"
+    />
+  </picture>
+</SwiperSlide>
         </Swiper>
       </div>
 

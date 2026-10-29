@@ -158,7 +158,7 @@ export default function Navbar({
           type="button"
           onClick={() => setIsSidebarOpen(true)}
           aria-label="Open menu"
-          className="mt-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm transition-all duration-200 hover:shadow-md"
+          className="mt-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white transition-all duration-200 hover:shadow-md"
         >
           <FiMenu
             size={21}
@@ -182,7 +182,7 @@ export default function Navbar({
                 : "Switch to dark mode"
             }
             title={isDark ? "Light mode" : "Dark mode"}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-[0_3px_12px_rgba(0,0,0,0.07)] transition-all duration-200 hover:shadow-md"
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-white  transition-all duration-200 hover:shadow-md"
           >
             {isDark ? (
               <FiSun
@@ -220,7 +220,7 @@ export default function Navbar({
                   {/* MOBILE DROPDOWN */}
 
                   {isProfileOpen && (
-                    <div className="absolute right-0 top-11 z-50 w-48 overflow-hidden rounded-xl border border-gray-100 bg-white p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+                    <div className="absolute right-0 top-11 z-50 w-48 overflow-hidden rounded-xl border border-gray-100 bg-white p-1.5">
 
                       {/* USER INFO */}
 
@@ -316,7 +316,7 @@ export default function Navbar({
 
         {showSearch && (
           <div className="flex w-full items-center justify-center min-[721px]:flex-1 min-[721px]:px-10">
-            <div className="mt-4 flex h-[40px] w-[95%] items-center rounded-md bg-white px-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)] min-[721px]:mt-0 min-[721px]:w-full min-[721px]:max-w-[500px]">
+            <div className="mt-4 flex h-[40px] w-[95%] items-center rounded-md bg-white px-4 min-[721px]:mt-0 min-[721px]:w-full min-[721px]:max-w-[500px]">
 
               <FiSearch
                 className="shrink-0 text-subheading"

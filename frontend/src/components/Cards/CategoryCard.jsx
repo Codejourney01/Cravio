@@ -31,8 +31,6 @@ export default function CategoryCard({
         flex
         items-center
         justify-center
-
-        shadow-[0_4px_18px_rgba(255,90,31,0.07)]
       ">
         <img
           className="
